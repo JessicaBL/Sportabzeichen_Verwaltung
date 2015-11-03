@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Sportabzeichen_Verwaltung</string>
+    <string name="edit">delete</string>
+
 </resources>
