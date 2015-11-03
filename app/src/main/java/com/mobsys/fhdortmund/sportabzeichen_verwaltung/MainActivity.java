@@ -25,5 +25,9 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    public void showMap (View view){
+        Intent intent = new Intent(this, Map.class);
+        startActivity(intent);
+    }
 }
 

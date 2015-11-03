@@ -16,6 +16,7 @@
         android:layout_alignParentTop="true"
         android:layout_alignLeft="@+id/button_showAthleteOverview"
         android:layout_alignStart="@+id/button_showAthleteOverview"
+        android:onClick="showMap"
         />
 
     <Button
