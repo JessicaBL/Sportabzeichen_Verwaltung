@@ -4,10 +4,10 @@
 
     To get one, follow this link, follow the directions and press "Create" at the end:
 
-    https://console.developers.google.com/flows/enableapi?apiid=maps_android_backend&keyType=CLIENT_SIDE_ANDROID&r=19:72:34:26:DC:1E:3D:63:42:A1:8A:D5:B5:29:1D:14:6D:8C:CA:E8%3Bcom.mobsys.fhdortmund.sportabzeichen_verwaltung
+    https://console.developers.google.com/flows/enableapi?apiid=maps_android_backend&keyType=CLIENT_SIDE_ANDROID&r=C1:EC:6E:4D:3F:31:46:79:BA:10:40:CF:C1:7D:BE:0F:85:E9:73:34%3Bcom.mobsys.fhdortmund.sportabzeichen_verwaltung
 
     You can also add your credentials to an existing key, using this line:
-    19:72:34:26:DC:1E:3D:63:42:A1:8A:D5:B5:29:1D:14:6D:8C:CA:E8;com.mobsys.fhdortmund.sportabzeichen_verwaltung
+    C1:EC:6E:4D:3F:31:46:79:BA:10:40:CF:C1:7D:BE:0F:85:E9:73:34;com.mobsys.fhdortmund.sportabzeichen_verwaltung
 
     Alternatively, follow the directions here:
     https://developers.google.com/maps/documentation/android/start#get-key
@@ -16,6 +16,6 @@
     string in this file.
     -->
     <string name="google_maps_key" translatable="false" templateMergeStrategy="preserve">
-        AIzaSyAEm6YDyfwphVldKV9gJMb5QNJS0h00gqg
+        AIzaSyDKAdyRHz796lh4PUx7v90q-ulRLEmjcfM
     </string>
 </resources>
