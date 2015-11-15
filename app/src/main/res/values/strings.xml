@@ -2,5 +2,6 @@
     <string name="app_name">Sportabzeichen_Verwaltung</string>
     <string name="edit">delete</string>
     <string name="title_activity_maps">Map</string>
+    <string name="title_activity_show_results">ShowResults</string>
 
 </resources>

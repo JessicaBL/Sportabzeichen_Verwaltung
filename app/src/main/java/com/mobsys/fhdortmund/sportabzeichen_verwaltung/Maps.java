@@ -33,6 +33,7 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback, Google
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
         myDbSp = new DatabaseHelperSports(this);
+
     }
 
 
@@ -108,7 +109,7 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback, Google
             LatLng latlng = new LatLng(Double.parseDouble(position_lat), Double.parseDouble(position_lng));
             mMap.addMarker(new MarkerOptions()
                     .position(latlng)
-                    .title(id+", "+name+", "+info));
+                    .title(id+", "+name+", Einheit: "+info));
         }
 
     }
@@ -120,15 +121,26 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback, Google
                 .setItems(R.array.sports, new DialogInterface.OnClickListener(){
                     public void onClick(DialogInterface dialog, int which){
 
-                        if (which ==0){
+                        String title = marker.getTitle();
+                        String[] splitResult = title.split(",");
+                        String result = splitResult[0];
 
+                        if (which ==0){
+                            //eintragen
+                            Intent intent = new Intent(Maps.this, NewResult.class);
+                            intent.putExtra("id", result);
+                            startActivity(intent);
                         }
 
-                        else if (which ==1){
+                        if(which==1){
+                            //alle anzeigen
+                            Intent intent = new Intent(Maps.this, ShowResults.class);
+                            intent.putExtra("id", result);
+                            startActivity(intent);
+                        }
+
+                        else if (which ==2){
                             //löschen
-                            String title = marker.getTitle();
-                            String[] splitResult = title.split(",");
-                            String result = splitResult[0];
 
                             myDbSp.deleteData(result);
 

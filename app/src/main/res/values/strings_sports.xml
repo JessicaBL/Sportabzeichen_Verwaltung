@@ -3,7 +3,8 @@
 
     <string-array name="sports">
         <item>Ergebnisse eintragen</item>
-        <item>Löschen</item>
+        <item>Alle Ergebnisse anzeigen</item>
+        <item>Station löschen</item>
     </string-array>
 
 </resources>

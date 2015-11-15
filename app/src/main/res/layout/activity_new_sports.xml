@@ -40,21 +40,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Info"
+        android:text="Einheit"
         android:id="@+id/textView8"
-        android:layout_below="@+id/textView7"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginTop="56dp" />
-
-    <EditText
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/editText_sportsInfo"
-        android:layout_alignBottom="@+id/textView8"
-        android:layout_toRightOf="@+id/textView8"
-        android:layout_alignRight="@+id/editText_sportsName"
-        android:layout_alignEnd="@+id/editText_sportsName" />
+        android:layout_above="@+id/radioButton_meter"
+        android:layout_centerHorizontal="true" />
 
     <Button
         android:layout_width="wrap_content"
@@ -63,6 +52,31 @@
         android:id="@+id/button_addSports"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true" />
+
+    <RadioButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Meter"
+        android:id="@+id/radioButton_meter"
+        android:checked="false"
+        android:layout_centerVertical="true"
+        android:layout_toLeftOf="@+id/button_addSports"
+        android:layout_toStartOf="@+id/button_addSports"
+        android:onClick="onRadioButtonMeterClicked"/>
+
+    />
+
+    <RadioButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Sekunden"
+        android:id="@+id/radioButton_seconds"
+        android:layout_below="@+id/textView8"
+        android:layout_toRightOf="@+id/textView8"
+        android:layout_toEndOf="@+id/textView8"
+        android:checked="false"
+        android:onClick="onRadioButtonSecondsClicked"/>
+    />
 
 </RelativeLayout>
 

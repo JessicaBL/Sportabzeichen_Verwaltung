@@ -14,6 +14,8 @@ import android.widget.EditText;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
+import android.widget.Toolbar;
+
 import java.util.ArrayList;
 
 
@@ -27,7 +29,9 @@ public class AthleteOverview extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_athlete_overview);
+
         myDb = new DatabaseHelper(this);
+
 
         editName = (EditText) findViewById(R.id.editText_name);
         editSurname = (EditText) findViewById(R.id.editText_surname);
@@ -35,6 +39,10 @@ public class AthleteOverview extends AppCompatActivity {
 
 
     }
+
+    private void setSupportActionBar(Toolbar myToolbar) {
+    }
+
 
     //ListView mit SQLite-Daten erstellen
     public void populateListView(){
@@ -55,6 +63,7 @@ public class AthleteOverview extends AppCompatActivity {
         final ListView lv = (ListView)findViewById(R.id.listView_athletes);
         lv.setAdapter(adapter);
         registerForContextMenu(lv);
+
     }
 
     //Kontextmenü für Sportler-Eigenschaften (Löschen, ...) erstellen
@@ -71,12 +80,18 @@ public class AthleteOverview extends AppCompatActivity {
         String selectedFromList = (lv.getItemAtPosition(info.position).toString());
 
         String[] splitResult = selectedFromList.split(" ");
-        String result = splitResult[0];
+        String id_athlete = splitResult[0];
         switch (item.getItemId()) {
             case R.id.delete_athlete:
-                myDb.deleteData(result);
+                myDb.deleteData(id_athlete);
                 //   Show message
                 Toast.makeText(getApplicationContext(), "Sportler gelöscht", Toast.LENGTH_LONG).show();
+                lv.deferNotifyDataSetChanged();
+
+            case R.id.results_athlete:
+                Intent intent = new Intent(this, ResultsAthlete.class);
+                intent.putExtra("id_athlete", id_athlete);
+                startActivity(intent);
         }
         return true;
     }
@@ -84,6 +99,7 @@ public class AthleteOverview extends AppCompatActivity {
 
     public void showNewAthlete(View view) {
         Intent intent = new Intent(this, NewAthlete.class);
+
         startActivity(intent);
     }
 

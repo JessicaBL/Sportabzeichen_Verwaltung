@@ -70,7 +70,11 @@ public class DatabaseHelperSports extends SQLiteOpenHelper{
         return db.delete(TABLE_NAME, "ID = ?", new String[]{id});
     }
 
-
+    public Cursor selectSingleData(String id){
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor res = db.rawQuery("select * from " + TABLE_NAME+ " WHERE id ="+id+"", null);
+        return res;
+    }
 
 
 

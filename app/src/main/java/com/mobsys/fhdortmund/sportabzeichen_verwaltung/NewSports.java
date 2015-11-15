@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RadioButton;
 import android.widget.Toast;
 
 public class NewSports extends AppCompatActivity {
@@ -25,7 +26,6 @@ public class NewSports extends AppCompatActivity {
         myDbSp = new DatabaseHelperSports(this);
 
         editName = (EditText) findViewById(R.id.editText_sportsName);
-        editInfo = (EditText) findViewById(R.id.editText_sportsInfo);
 
         Intent intent = getIntent();
         lat = intent.getDoubleExtra("lat", 0.0);
@@ -42,13 +42,20 @@ public class NewSports extends AppCompatActivity {
                     @Override
                     public void onClick(View v) {
 
+                        RadioButton meter= (RadioButton)findViewById(R.id.radioButton_meter);
+                        RadioButton seconds= (RadioButton)findViewById(R.id.radioButton_seconds);
+                        String unity="Meter";
+                        if(seconds.isChecked()) unity="Sekunden";
+
                         if (editName.getText().toString().equals("")) {
                             Toast.makeText(NewSports.this, "Bitte Name der Sportart angeben", Toast.LENGTH_LONG).show();
-                        } else if (editInfo.getText().toString().equals("")) {
-                            Toast.makeText(NewSports.this, "Bitte Sport-Info angeben", Toast.LENGTH_LONG).show();
+                        }
+                          else if(!meter.isChecked()&& !seconds.isChecked()) {
+                            Toast.makeText(NewSports.this, "Bitte die Einheit der Sportart angeben", Toast.LENGTH_LONG).show();
+
                         } else {
                             boolean isInserted = myDbSp.insertData(editName.getText().toString(),
-                                    editInfo.getText().toString(),Double.toString(lat), Double.toString(lng));
+                                    unity,Double.toString(lat), Double.toString(lng));
 
                             if (isInserted == true) {
                                 Toast.makeText(NewSports.this, "Disziplin angelegt", Toast.LENGTH_LONG).show();
@@ -63,7 +70,14 @@ public class NewSports extends AppCompatActivity {
         );
     }
 
-
+    public void onRadioButtonMeterClicked (View view) {
+        RadioButton seconds= (RadioButton)findViewById(R.id.radioButton_seconds);
+        seconds.setChecked(false);
+    }
+    public void onRadioButtonSecondsClicked(View view) {
+        RadioButton meter= (RadioButton)findViewById(R.id.radioButton_meter);
+        meter.setChecked(false);
+    }
 
 }
 

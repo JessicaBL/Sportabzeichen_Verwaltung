@@ -45,6 +45,15 @@
         </activity>
         <activity android:name=".NewSports" >
         </activity>
+        <activity android:name=".NewResult" >
+        </activity>
+        <activity
+            android:name=".ShowResults"
+            android:label="@string/title_activity_show_results"
+            android:theme="@style/AppTheme.NoActionBar" >
+        </activity>
+        <activity android:name=".ResultsAthlete" >
+        </activity>
     </application>
 
 </manifest>

@@ -73,6 +73,14 @@ public class DatabaseHelper extends SQLiteOpenHelper{
         return db.delete(TABLE_NAME, "ID = ?", new String[]{id});
     }
 
+    public Cursor selectSingleDataAthlete(String id){
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor res = db.rawQuery("select * from " + TABLE_NAME + " WHERE id =" + id + "", null);
+        return res;
+    }
+
+
+
 
 
 

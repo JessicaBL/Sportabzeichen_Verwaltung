@@ -1,10 +1,9 @@
 package com.mobsys.fhdortmund.sportabzeichen_verwaltung;
 
-import android.provider.MediaStore;
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -83,8 +82,11 @@ public class NewAthlete extends AppCompatActivity {
                                             String.valueOf(spinnerBirthdayYear.getSelectedItem()),
                                     sex);
 
-                            if (isInserted == true)
+                            if (isInserted == true) {
                                 Toast.makeText(NewAthlete.this, "Sportler angelegt", Toast.LENGTH_LONG).show();
+                                Intent intent = new Intent(NewAthlete.this, AthleteOverview.class);
+                                startActivity(intent);
+                            }
                             else
                                 Toast.makeText(NewAthlete.this, "Sportler nicht angelegt", Toast.LENGTH_LONG).show();
                         }
