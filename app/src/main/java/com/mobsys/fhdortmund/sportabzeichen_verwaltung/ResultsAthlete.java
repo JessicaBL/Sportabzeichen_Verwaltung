@@ -64,10 +64,11 @@ public class ResultsAthlete extends AppCompatActivity {
             Cursor res_Sports  = myDbSp.selectSingleData(id_sports);
             res_Sports.moveToFirst();
             String sport_name = res_Sports.getString(1);
-            String sport_info = res_Sports.getString(2);
+            String sport_parameter = res_Sports.getString(2);
+            String sport_unit = res_Sports.getString(3);
 
 
-            Result_List.add(sport_name +": "+ result+" "+sport_info+", Versuch-Nr: "+result_nr);
+            Result_List.add(sport_name+" "+sport_parameter+": "+ result+" "+sport_unit+", Versuch-Nr: "+result_nr);
         }
         TextView results_athletes=(TextView)findViewById(R.id.textView_results_athletes);
         results_athletes.setText("Ergebnisse für "+ name+" "+surname+", "+birthday+", "+sex);

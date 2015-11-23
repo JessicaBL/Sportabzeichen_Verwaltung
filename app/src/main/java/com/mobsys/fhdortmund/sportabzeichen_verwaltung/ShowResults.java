@@ -42,6 +42,7 @@ public class ShowResults extends AppCompatActivity {
 
 
         String sport_name = null;
+        String sport_parameter = null;
 
         while(res_Results.moveToNext()){
 
@@ -58,14 +59,16 @@ public class ShowResults extends AppCompatActivity {
           Cursor res_Sports = myDbSp.selectSingleData(id_sports);
           res_Sports.moveToFirst();
           sport_name = res_Sports.getString(1);
-          String sport_info = res_Sports.getString(2);
+          sport_parameter = res_Sports.getString(2);
+          String sport_unit = res_Sports.getString(3);
 
-          Result_List.add(name +" " +surname+": "+ result+" "+sport_info+", Versuch-Nr: "+result_nr);
+
+            Result_List.add(name +" " +surname+": "+ result+" "+sport_unit+", Versuch-Nr: "+result_nr);
 
         }
 
         TextView results_all=(TextView)findViewById(R.id.textView_Results_all);
-        results_all.setText("Ergebnisse für Disziplin "+ sport_name);
+        results_all.setText("Ergebnisse für Disziplin "+ sport_name+" "+sport_parameter);
 
 
         ListAdapter adapter = new ArrayAdapter(ShowResults.this, android.R.layout.simple_list_item_1,Result_List);

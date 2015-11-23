@@ -46,15 +46,17 @@ public class NewResult extends AppCompatActivity {
         id_sports = null;
         String name= null;
         String unity = null;
+        String parameter = null;
 
         while(res.moveToNext()) {
             id_sports = res.getString(0);
             name = res.getString(1);
-            unity = res.getString(2);
+            parameter = res.getString(2);
+            unity = res.getString(3);
         }
 
        TextView sports_text=(TextView)findViewById(R.id.sports_text);
-       sports_text.setText("Ergebnisse für Sportart '"+ name+"' eintragen");
+       sports_text.setText("Ergebnisse für Sportart '"+ name+" "+parameter+"' eintragen");
 
         TextView sports_text_unity=(TextView)findViewById(R.id.sports_text_unity);
         sports_text_unity.setText(""+unity+"");

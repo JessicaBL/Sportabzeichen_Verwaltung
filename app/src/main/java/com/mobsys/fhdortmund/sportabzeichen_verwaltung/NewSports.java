@@ -26,6 +26,7 @@ public class NewSports extends AppCompatActivity {
         myDbSp = new DatabaseHelperSports(this);
 
         editName = (EditText) findViewById(R.id.editText_sportsName);
+        editInfo = (EditText) findViewById(R.id.editText_sportsParameter);
 
         Intent intent = getIntent();
         lat = intent.getDoubleExtra("lat", 0.0);
@@ -50,12 +51,15 @@ public class NewSports extends AppCompatActivity {
                         if (editName.getText().toString().equals("")) {
                             Toast.makeText(NewSports.this, "Bitte Name der Sportart angeben", Toast.LENGTH_LONG).show();
                         }
+                        else if(editInfo.getText().toString().equals("")){
+                            Toast.makeText(NewSports.this, "Bitte Parameter der Sportart angeben", Toast.LENGTH_LONG).show();
+                        }
                           else if(!meter.isChecked()&& !seconds.isChecked()) {
                             Toast.makeText(NewSports.this, "Bitte die Einheit der Sportart angeben", Toast.LENGTH_LONG).show();
 
                         } else {
                             boolean isInserted = myDbSp.insertData(editName.getText().toString(),
-                                    unity,Double.toString(lat), Double.toString(lng));
+                                    editInfo.getText().toString(),unity,Double.toString(lat), Double.toString(lng));
 
                             if (isInserted == true) {
                                 Toast.makeText(NewSports.this, "Disziplin angelegt", Toast.LENGTH_LONG).show();

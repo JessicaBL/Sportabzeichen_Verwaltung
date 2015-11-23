@@ -103,14 +103,15 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback, Google
         while(res.moveToNext()){
             String id=res.getString(0);
             String name=res.getString(1);
-            String info=res.getString(2);
-            String position_lat=res.getString(3);
-            String position_lng=res.getString(4);
+            String parameter=res.getString(2);
+            String unit = res.getString(3);
+            String position_lat=res.getString(4);
+            String position_lng=res.getString(5);
 
             LatLng latlng = new LatLng(Double.parseDouble(position_lat), Double.parseDouble(position_lng));
             mMap.addMarker(new MarkerOptions()
                     .position(latlng)
-                    .title(id+", "+name+", Einheit: "+info));
+                    .title(id+", "+name+", "+parameter));
         }
 
     }
