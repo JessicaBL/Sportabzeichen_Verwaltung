@@ -19,12 +19,16 @@ public class NewResult extends AppCompatActivity {
     DatabaseHelper myDb;
     DatabaseHelperSports myDbSp;
     String id;
-    String id_sports;
     String id_athlete;
     Spinner spinnerAthlete;
     DatabaseHelperResults myDbRs;
     EditText result, resultNr;
     Button btnAddResult;
+
+    String id_sports = null;
+    String name= null;
+    String unity = null;
+    String parameter = null;
 
 
     @Override
@@ -43,10 +47,7 @@ public class NewResult extends AppCompatActivity {
 
          Cursor res = myDbSp.selectSingleData(id);
 
-        id_sports = null;
-        String name= null;
-        String unity = null;
-        String parameter = null;
+
 
         while(res.moveToNext()) {
             id_sports = res.getString(0);
@@ -124,11 +125,15 @@ public class NewResult extends AppCompatActivity {
 
                 if (isInserted == true) {
                     Toast.makeText(NewResult.this, "Ergebnis eingetragen", Toast.LENGTH_LONG).show();
-                    Intent intent = new Intent(NewResult.this, Maps.class);
+                    Intent intent = new Intent(NewResult.this, Medal.class);;
+                    String sports = name+" "+parameter;
+                    intent.putExtra("sports",sports);
+                    intent.putExtra("athlete", athlete);
+                    intent.putExtra("result", result.getText().toString());
                     startActivity(intent);
                 }
                 else
-                    Toast.makeText(NewResult.this, "Ergebnis eingetragen", Toast.LENGTH_LONG).show();
+                    Toast.makeText(NewResult.this, "Ergebnis nicht eingetragen", Toast.LENGTH_LONG).show();
             }
     }
     });
