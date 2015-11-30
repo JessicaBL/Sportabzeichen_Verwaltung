@@ -29,4 +29,27 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="28dp" />
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="Small Text"
+        android:id="@+id/login_as"
+        android:layout_alignParentTop="true"
+        android:layout_toLeftOf="@+id/button_logout"
+        android:layout_toStartOf="@+id/button_logout" />
+
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Logout"
+        android:id="@+id/button_logout"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:onClick="logout"
+
+        />
+
 </RelativeLayout>

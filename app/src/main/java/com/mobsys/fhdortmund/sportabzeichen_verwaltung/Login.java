@@ -16,7 +16,7 @@ import java.util.ArrayList;
 
 public class Login extends AppCompatActivity {
 
-    DatabaseHelperPruefer myDb;
+    DatabaseHelperPruefer myDbPr;
 
 
     @Override
@@ -24,14 +24,14 @@ public class Login extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        myDb = new DatabaseHelperPruefer(this);
-        myDb.insertData("test", "1234");
+        myDbPr = new DatabaseHelperPruefer(this);
+        myDbPr.insertData("test", "1234");
 
         populateListView();
     }
 
     public void populateListView(){
-        Cursor res = myDb.getAllData();
+        Cursor res = myDbPr.getAllData();
 
         ArrayList<String> AthletesList = new ArrayList<String>();
 
@@ -57,9 +57,15 @@ public class Login extends AppCompatActivity {
         EditText name = (EditText)findViewById(R.id.editText_pruefer_name);
         EditText password = (EditText)findViewById(R.id.editText_pruefer_password);
         TextView error = (TextView)findViewById(R.id.label_error);
-        Cursor res = myDb.checkUser(name.getText().toString(), password.getText().toString());
+        Cursor res = myDbPr.checkUser(name.getText().toString(), password.getText().toString());
         if (res.getCount() > 0) {
             Intent intent = new Intent(this, MainActivity.class);
+
+            res.moveToFirst();
+            String id_pruefer = res.getString(0);
+            intent.putExtra("id_pruefer", id_pruefer);
+
+
             startActivity(intent);
         }
         else{

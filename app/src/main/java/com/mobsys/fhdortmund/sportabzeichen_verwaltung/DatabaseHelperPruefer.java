@@ -75,4 +75,12 @@ public class DatabaseHelperPruefer extends SQLiteOpenHelper {
         Cursor res = db.rawQuery("select * from " + TABLE_NAME + " WHERE " + COL_2 + " = \"" + name + "\" AND " + COL_3 + " = \"" + password + "\"", null);
         return res;
     }
+
+    public Cursor getName(String id){
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor res = db.rawQuery("select * from " + TABLE_NAME + " WHERE " + COL_1 + " = " + id, null);
+        return res;
+    }
+
+
 }
