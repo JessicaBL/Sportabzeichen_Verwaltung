@@ -11,6 +11,7 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.Toolbar;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -28,13 +29,11 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+
+
     private void setPrueferName() {
 
-        Intent intent = getIntent();
-        String id_pruefer;
-        id_pruefer =intent.getStringExtra("id_pruefer");
-
-        Cursor res = myDbPr.getName(id_pruefer);
+        Cursor res = myDbPr.getActive();
         res.moveToFirst();
         String name=res.getString(1);
 
