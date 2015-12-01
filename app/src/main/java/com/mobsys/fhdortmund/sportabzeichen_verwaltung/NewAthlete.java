@@ -54,6 +54,7 @@ public class NewAthlete extends AppCompatActivity {
 
     }
 
+
     public void AddData(){
         btnAddData.setOnClickListener(
                 new View.OnClickListener() {
@@ -104,4 +105,6 @@ public class NewAthlete extends AppCompatActivity {
         male.setChecked(false);
     }
 
-}
+    }
+
+

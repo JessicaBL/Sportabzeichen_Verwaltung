@@ -127,7 +127,10 @@
         android:layout_toRightOf="@+id/radioButton_male"
         android:layout_toEndOf="@+id/radioButton_male"
         android:checked="false"
-        android:onClick="onRadioButtonFemaleClicked"/>
+        android:onClick="onRadioButtonFemaleClicked"/><![CDATA[
+
+    />
     />
 
+]]>
 </RelativeLayout>

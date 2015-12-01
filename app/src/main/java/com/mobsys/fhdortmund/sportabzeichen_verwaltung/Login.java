@@ -24,9 +24,8 @@ public class Login extends AppCompatActivity {
         setContentView(R.layout.activity_login);
 
         myDbPr = new DatabaseHelperPruefer(this);
-        // myDbPr.insertData("hendrik", "1234", "0");
-        // myDbPr.insertData("jargo", "1234", "0");
-        // myDbPr.insertData("wim", "1234", "0");
+        myDbPr.insertData("test", "1234", "0");
+
 
         Cursor res = myDbPr.getAllData();
 

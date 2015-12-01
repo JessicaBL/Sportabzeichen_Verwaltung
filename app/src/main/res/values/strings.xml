@@ -3,6 +3,7 @@
     <string name="edit">delete</string>
     <string name="title_activity_maps">Map</string>
     <string name="title_activity_show_results">ShowResults</string>
+    <string name="title_activity_main2">Main2Activity</string>
 
 
 </resources>
