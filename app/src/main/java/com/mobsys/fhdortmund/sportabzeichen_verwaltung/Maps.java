@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
@@ -14,6 +15,7 @@ import android.widget.Toast;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -102,16 +104,46 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback, Google
 
         while(res.moveToNext()){
             String id=res.getString(0);
-            String name=res.getString(1);
-            String parameter=res.getString(2);
+            String category=res.getString(1);
+            String sport=res.getString(2);
             String unit = res.getString(3);
             String position_lat=res.getString(4);
             String position_lng=res.getString(5);
 
             LatLng latlng = new LatLng(Double.parseDouble(position_lat), Double.parseDouble(position_lng));
-            mMap.addMarker(new MarkerOptions()
-                    .position(latlng)
-                    .title(id+", "+name+", "+parameter));
+
+            if(category.equals("0")) {
+                Resources res_end = getResources();
+                String[] endurance = res_end.getStringArray(R.array.endurance_array);
+                mMap.addMarker(new MarkerOptions()
+                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ROSE))
+                        .position(latlng)
+                        .title(id + " - Ausdauer: " + endurance[Integer.parseInt(sport)]));
+            }
+            if(category.equals("1")) {
+                Resources res_str = getResources();
+                String[] strength = res_str.getStringArray(R.array.strength_array);
+                mMap.addMarker(new MarkerOptions()
+                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA))
+                        .position(latlng)
+                        .title(id + " - Kraft: " + strength[Integer.parseInt(sport)]));
+            }
+            if(category.equals("2")) {
+                Resources res_str = getResources();
+                String[] agility = res_str.getStringArray(R.array.agility_array);
+                mMap.addMarker(new MarkerOptions()
+                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE))
+                        .position(latlng)
+                        .title(id + " - Schnelligkeit: " + agility[Integer.parseInt(sport)]));
+            }
+            if(category.equals("3")) {
+                Resources res_str = getResources();
+                String[] coordination = res_str.getStringArray(R.array.coordination_array);
+                mMap.addMarker(new MarkerOptions()
+                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED ))
+                        .position(latlng)
+                        .title(id + " - Koordination: " + coordination[Integer.parseInt(sport)]));
+            }
         }
 
     }
@@ -124,7 +156,7 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback, Google
                     public void onClick(DialogInterface dialog, int which){
 
                         String title = marker.getTitle();
-                        String[] splitResult = title.split(",");
+                        String[] splitResult = title.split(" ");
                         String result = splitResult[0];
 
                         if (which ==0){

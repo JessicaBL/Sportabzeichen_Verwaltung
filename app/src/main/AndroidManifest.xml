@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.mobsys.fhdortmund.sportabzeichen_verwaltung" >
+    package="com.mobsys.fhdortmund.sportabzeichen_verwaltung">
 
     <!--
          The ACCESS_COARSE/FINE_LOCATION permissions are not required to use
@@ -14,16 +14,7 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme" >
-        <activity android:name=".Login" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-        <activity android:name=".AthleteOverview" />
-        <activity android:name=".NewAthlete" />
+        android:theme="@style/AppTheme">
 
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
@@ -40,19 +31,45 @@
         <activity
             android:name=".Maps"
             android:label="@string/title_activity_maps" />
-        <activity android:name=".NewSports" />
-        <activity android:name=".NewResult" />
+        />
         <activity
             android:name=".ShowResults"
             android:label="@string/title_activity_show_results"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".ResultsAthlete" />
+        <activity
+            android:name=".ResultsAthlete"
+            android:label="@string/title_activity_show_results_athlete" />
         <activity android:name=".Medal" />
         <activity
             android:name=".MainActivity"
-            android:label="@string/app_name"
-            android:theme="@style/AppTheme.NoActionBar" >
+            android:label="@string/title_activity_MainActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".AthleteOverview"
+            android:label="@string/title_activity_athlete_overview"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".NewAthlete"
+            android:label="@string/title_activity_new_athlete"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".Login"
+            android:label="@string/title_activity_login"
+            android:theme="@style/AppTheme.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
+        <activity
+            android:name=".NewSports"
+            android:label="@string/title_activity_new_sports"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".NewResult"
+            android:label="@string/title_activity_new_result"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>

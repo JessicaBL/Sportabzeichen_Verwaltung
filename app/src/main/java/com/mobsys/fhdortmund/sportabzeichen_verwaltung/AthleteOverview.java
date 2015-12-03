@@ -2,10 +2,12 @@ package com.mobsys.fhdortmund.sportabzeichen_verwaltung;
 
 import android.content.Intent;
 import android.database.Cursor;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.ContextMenu;
 import android.view.KeyEvent;
+import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -15,16 +17,13 @@ import android.widget.EditText;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
-import android.widget.Toolbar;
 
 import java.util.ArrayList;
-
 
 public class AthleteOverview extends AppCompatActivity {
 
     DatabaseHelper myDb;
     EditText editName, editSurname;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,17 +32,16 @@ public class AthleteOverview extends AppCompatActivity {
 
         myDb = new DatabaseHelper(this);
 
-
         editName = (EditText) findViewById(R.id.editText_name);
         editSurname = (EditText) findViewById(R.id.editText_surname);
         populateListView();
 
 
-    }
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
-    private void setSupportActionBar(Toolbar myToolbar) {
-    }
 
+    }
 
     //ListView mit SQLite-Daten erstellen
     public void populateListView(){
@@ -57,7 +55,7 @@ public class AthleteOverview extends AppCompatActivity {
             String surname=res.getString(2);
             String birthday=res.getString(3);
             String sex=res.getString(4);
-            AthletesList.add(id+ " Vorname: "+name+", Nachname: "+surname+", Geburtstag: "+birthday+", Geschlecht: "+sex);
+            AthletesList.add(id+ " - "+name+" "+surname+", "+birthday+", "+sex);
         }
         ListAdapter adapter = new ArrayAdapter<>(AthleteOverview.this, android.R.layout.simple_list_item_1,AthletesList);
 
@@ -71,7 +69,7 @@ public class AthleteOverview extends AppCompatActivity {
     @Override public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.main_menu, menu);
+        inflater.inflate(R.menu.context_athletes_overview, menu);
     }
 
     @Override public boolean onContextItemSelected(MenuItem item) {
@@ -87,7 +85,6 @@ public class AthleteOverview extends AppCompatActivity {
                 myDb.deleteData(id_athlete);
                 //   Show message
                 Toast.makeText(getApplicationContext(), "Sportler gelöscht", Toast.LENGTH_LONG).show();
-                lv.deferNotifyDataSetChanged();
 
             case R.id.results_athlete:
                 Intent intent = new Intent(this, ResultsAthlete.class);
@@ -110,15 +107,30 @@ public class AthleteOverview extends AppCompatActivity {
     }
 
 
-    public void showNewAthlete(View view) {
-        Intent intent = new Intent(this, NewAthlete.class);
 
-        startActivity(intent);
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_athlete_overview, menu);
+        return true;
     }
 
-    public void refreshAthletes(View view){
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
 
-        recreate();
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_new_athlete) {
+            Intent intent = new Intent(this, NewAthlete.class);
+            startActivity(intent);
+        }
+        if (id == R.id.action_refresh) {
+            recreate();
+        }
+        return super.onOptionsItemSelected(item);
     }
 
 }

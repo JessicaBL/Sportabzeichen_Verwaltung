@@ -1,53 +1,62 @@
 package com.mobsys.fhdortmund.sportabzeichen_verwaltung;
 
+import android.app.ActionBar;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.database.Cursor;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.text.DateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 public class NewResult extends AppCompatActivity {
 
     DatabaseHelper myDb;
     DatabaseHelperSports myDbSp;
-    String id;
-    String id_athlete;
-    Spinner spinnerAthlete;
     DatabaseHelperResults myDbRs;
     DatabaseHelperPruefer myDbPr;
-    EditText result, resultNr;
-    Button btnAddResult;
+
+    String id;
+    String id_athlete;
+    Spinner spinner_athlete;
+    EditText result;
 
     String id_sports = null;
-    String name= null;
-    String unity = null;
-    String parameter = null;
+    String category= null;
+    String unit = null;
+    String sports = null;
 
     String id_pruefer = null;
-
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_result);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
         myDb = new DatabaseHelper(this);
         myDbSp = new DatabaseHelperSports(this);
         myDbRs = new DatabaseHelperResults(this);
         myDbPr = new DatabaseHelperPruefer(this);
 
-        Intent intent = getIntent();
-        id =intent.getStringExtra("id");
 
+        Intent intent = getIntent();
+        id = intent.getStringExtra("id");
 
         Cursor res = myDbSp.selectSingleData(id);
 
@@ -56,46 +65,51 @@ public class NewResult extends AppCompatActivity {
         id_pruefer= resPr.getString(0);
 
 
-
         while(res.moveToNext()) {
             id_sports = res.getString(0);
-            name = res.getString(1);
-            parameter = res.getString(2);
-            unity = res.getString(3);
+            category= res.getString(1);
+            sports = res.getString(2);
+            unit = res.getString(3);
         }
+        Resources res_str = getResources();
+        String[] sport_name = new String[0];
+        if(category.equals(0)) {
+            sport_name = res_str.getStringArray(R.array.endurance_array);
+        }
+        if(category.equals(1)) {
+            sport_name = res_str.getStringArray(R.array.strength_array);
+        }
+        if(category.equals(2)) {
+            sport_name = res_str.getStringArray(R.array.agility_array);
+        }
+        if(category.equals(3)) {
+            sport_name = res_str.getStringArray(R.array.coordination_array);
+        }
+//        String name = sport_name[Integer.valueOf(sports)];
+//        toolbar = (Toolbar) findViewById(R.id.toolbar);
+//        this.setSupportActionBar(toolbar);
+//        getSupportActionBar().setDisplayShowTitleEnabled(true);
+      //  getSupportActionBar().setTitle("Ergebnis Sportart " +name);
 
-        TextView sports_text=(TextView)findViewById(R.id.sports_text);
-        sports_text.setText("Ergebnisse für Sportart '"+ name+" "+parameter+"' eintragen");
+        ArrayList < String > AthletesList = populateSpinner();
 
-        TextView sports_text_unity=(TextView)findViewById(R.id.sports_text_unity);
-        sports_text_unity.setText(""+unity+"");
-
-
-
-        ArrayList<String> AthletesList = populateSpinner();
-
-        spinnerAthlete = (Spinner) findViewById(R.id.spinner_athlete);
-
+        spinner_athlete = (Spinner) findViewById(R.id.spinner_athlete);
+        result = (EditText) findViewById(R.id.editText_result);
         ArrayAdapter<String> adapter_athletes= new ArrayAdapter<String>(
                 this,
                 android.R.layout.simple_spinner_item,
                 AthletesList);
 
         adapter_athletes.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinnerAthlete.setAdapter(adapter_athletes);
+        spinner_athlete.setAdapter(adapter_athletes);
 
+        TextView sports_text=(TextView)findViewById(R.id.textView_unit);
+        sports_text.setText("Ergebnis in "+ unit);
 
-
-        result = (EditText) findViewById(R.id.editTextresult);
-        resultNr = (EditText) findViewById(R.id.editTextresultNr);
-        btnAddResult = (Button) findViewById(R.id.result_add);
-        AddData();
 
     }
 
-
-    //Daten für Sportler-Spinner erzeugen
-    public ArrayList<String> populateSpinner(){
+    public ArrayList<String> populateSpinner() {
         Cursor res = myDb.getAllData();
 
         ArrayList<String> AthletesList = new ArrayList<String>();
@@ -104,52 +118,54 @@ public class NewResult extends AppCompatActivity {
             String ID=res.getString(0);
             String name=res.getString(1);
             String surname=res.getString(2);
-            AthletesList.add(ID+", "+name+" "+ surname);
+            AthletesList.add(ID+" - "+name+" "+ surname);
         }
 
         return AthletesList;
-    }
-
-
-
-    private void AddData() {
-        btnAddResult.setOnClickListener(
-                new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        String athlete =String.valueOf(spinnerAthlete.getSelectedItem());
-                        String[] splitResult = athlete.split(",");
-                        String id_athlete = splitResult[0];
-
-
-                        if (result.getText().toString().equals("")) {
-                            Toast.makeText(NewResult.this, "Bitte Ergebnis eingeben", Toast.LENGTH_LONG).show();
-                        } else if (resultNr.getText().toString().equals("")) {
-                            Toast.makeText(NewResult.this, "Bitte Ergebnis-Nr. eingeben", Toast.LENGTH_LONG).show();
-                        }
-                        else {
-                            boolean isInserted = myDbRs.insertData(id_athlete.toString(), id_sports.toString()
-                                    , result.getText().toString(), resultNr.getText().toString(), id_pruefer.toString());
-
-                            if (isInserted == true) {
-                                Toast.makeText(NewResult.this, "Ergebnis eingetragen", Toast.LENGTH_LONG).show();
-                                Intent intent1 = new Intent(NewResult.this, Medal.class);
-                                String sports = name+" "+parameter;
-                                intent1.putExtra("sports",sports);
-                                intent1.putExtra("athlete", athlete);
-                                intent1.putExtra("result", result.getText().toString());
-                                startActivity(intent1);
-                            }
-                            else
-                                Toast.makeText(NewResult.this, "Ergebnis nicht eingetragen", Toast.LENGTH_LONG).show();
-                        }
-                    }
-                });
 
     }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_new_result, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_add_result) {
+            String athlete =String.valueOf(spinner_athlete.getSelectedItem());
+            String[] splitResult = athlete.split(" ");
+            String id_athlete = splitResult[0];
+
+            if (result.getText().toString().equals("")) {
+                Toast.makeText(NewResult.this, "Bitte Ergebnis eingeben", Toast.LENGTH_LONG).show();
+            }
+            else {
+                String currentDateString = DateFormat.getDateInstance().format(new Date());
+
+                boolean isInserted = myDbRs.insertData(id_athlete.toString(), id_sports.toString()
+                        , result.getText().toString(), currentDateString.toString(), id_pruefer.toString());
+
+                if (isInserted == true) {
+                    Toast.makeText(NewResult.this, "Ergebnis eingetragen", Toast.LENGTH_LONG).show();
+                    Intent intent1 = new Intent(NewResult.this, Maps.class);
+                    startActivity(intent1);
+                }
+                else
+                    Toast.makeText(NewResult.this, "Ergebnis nicht eingetragen", Toast.LENGTH_LONG).show();
+            }
+
+
+
+        }
+            return super.onOptionsItemSelected(item);
+        }
 }
-
-
-
-
-

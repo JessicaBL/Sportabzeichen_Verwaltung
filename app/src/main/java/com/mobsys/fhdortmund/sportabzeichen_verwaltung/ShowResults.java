@@ -16,6 +16,8 @@ public class ShowResults extends AppCompatActivity {
     DatabaseHelper myDb;
     DatabaseHelperSports myDbSp;
     DatabaseHelperResults myDbRs;
+    DatabaseHelperPruefer myDbPr;
+
     String id_sports_results;
     ArrayList<String> Result_List= new ArrayList<String>();
 
@@ -27,6 +29,7 @@ public class ShowResults extends AppCompatActivity {
         myDb = new DatabaseHelper(this);
         myDbSp = new DatabaseHelperSports(this);
         myDbRs = new DatabaseHelperResults(this);
+        myDbPr = new DatabaseHelperPruefer(this);
 
         populateListView();
 
@@ -50,6 +53,7 @@ public class ShowResults extends AppCompatActivity {
           String id_sports = res_Results.getString(2);
           String result = res_Results.getString(3);
           String result_nr = res_Results.getString(4);
+          String id_pruefer = res_Results.getString(5);
 
           Cursor res_Athlete = myDb.selectSingleDataAthlete(id_athlete);
           res_Athlete.moveToFirst();
@@ -62,8 +66,16 @@ public class ShowResults extends AppCompatActivity {
           sport_parameter = res_Sports.getString(2);
           String sport_unit = res_Sports.getString(3);
 
+          Cursor res_Pruefer = myDbPr.getActive();
+          res_Pruefer.moveToFirst();
+          String cur_pruefer_id= res_Pruefer.getString(0);
 
-            Result_List.add(name +" " +surname+": "+ result+" "+sport_unit+", Versuch-Nr: "+result_nr);
+          if (cur_pruefer_id.equals(id_pruefer)) {
+                Result_List.add(name + " " + surname + ": " + result + " " + sport_unit + ", Datum: " + result_nr);
+            }
+          else{
+              Result_List.add("Ergebnis für " +name + " " + surname + " für Prüfer unsichtbar, Datum: " + result_nr);
+          }
 
         }
 

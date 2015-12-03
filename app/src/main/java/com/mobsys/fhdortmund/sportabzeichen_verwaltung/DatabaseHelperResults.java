@@ -14,7 +14,7 @@ public class DatabaseHelperResults extends SQLiteOpenHelper{
     public static final String COL_2= "ID_ATHLETE";
     public static final String COL_3= "ID_SPORTS";
     public static final String COL_4= "RESULT";
-    public static final String COL_5= "RESULT_NR";
+    public static final String COL_5= "RESULT_DATE";
     public static final String COL_6= "ID_PRUEFER";
 
 
@@ -25,7 +25,7 @@ public class DatabaseHelperResults extends SQLiteOpenHelper{
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL("create table " + TABLE_NAME + " (ID INTEGER PRIMARY KEY AUTOINCREMENT,ID_ATHLETE TEXT,ID_SPORTS TEXT, RESULT TEXT, RESULT_NR TEXT, ID_PRUEFER)");
+        db.execSQL("create table " + TABLE_NAME + " (ID INTEGER PRIMARY KEY AUTOINCREMENT,ID_ATHLETE TEXT,ID_SPORTS TEXT, RESULT TEXT, RESULT_DATE TEXT, ID_PRUEFER)");
     }
 
     @Override
@@ -34,13 +34,13 @@ public class DatabaseHelperResults extends SQLiteOpenHelper{
         onCreate(db);
     }
 
-    public boolean insertData(String id_athlete, String id_sports, String result, String result_nr, String id_pruefer){
+    public boolean insertData(String id_athlete, String id_sports, String result, String result_date, String id_pruefer){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put(COL_2, id_athlete);
         contentValues.put(COL_3, id_sports);
         contentValues.put(COL_4, result);
-        contentValues.put(COL_5, result_nr);
+        contentValues.put(COL_5, result_date);
         contentValues.put(COL_6, id_pruefer);
         long  result_data = db.insert(TABLE_NAME, null, contentValues);
         if(result_data==-1)
@@ -55,14 +55,14 @@ public class DatabaseHelperResults extends SQLiteOpenHelper{
         return res;
     }
 
-    public boolean updateData(String id, String id_athlete, String id_sports, String result, String result_nr, String id_pruefer){
+    public boolean updateData(String id, String id_athlete, String id_sports, String result, String result_date, String id_pruefer){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put(COL_1, id);
         contentValues.put(COL_2, id_athlete);
         contentValues.put(COL_3, id_sports);
         contentValues.put(COL_4, result);
-        contentValues.put(COL_5, result_nr);
+        contentValues.put(COL_5, result_date);
         contentValues.put(COL_6, id_pruefer);
         db.update(TABLE_NAME, contentValues, "ID = ?", new String[] { id });
         return true;

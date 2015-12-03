@@ -11,8 +11,8 @@ public class DatabaseHelperSports extends SQLiteOpenHelper{
     public static final String DATABASE_NAME = "sports.db";
     public static final String TABLE_NAME = "sports_table";
     public static final String COL_1 = "ID";
-    public static final String COL_2= "NAME";
-    public static final String COL_3= "PARAMETER";
+    public static final String COL_2= "CATEGORY";
+    public static final String COL_3= "SPORT";
     public static final String COL_4= "UNIT";
     public static final String COL_5= "POSITION_LAT";
     public static final String COL_6= "POSITION_LNG";
@@ -25,7 +25,7 @@ public class DatabaseHelperSports extends SQLiteOpenHelper{
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL("create table " + TABLE_NAME + " (ID INTEGER PRIMARY KEY AUTOINCREMENT,NAME TEXT,PARAMETER TEXT, UNIT TEXT, POSITION_LAT TEXT, POSITION_LNG TEXT)");
+        db.execSQL("create table " + TABLE_NAME + " (ID INTEGER PRIMARY KEY AUTOINCREMENT,CATEGORY TEXT,SPORT TEXT, UNIT TEXT, POSITION_LAT TEXT, POSITION_LNG TEXT)");
     }
 
     @Override
@@ -34,11 +34,11 @@ public class DatabaseHelperSports extends SQLiteOpenHelper{
         onCreate(db);
     }
 
-    public boolean insertData(String name, String parameter, String unit, String position_lat, String position_lng){
+    public boolean insertData(String category, String sport, String unit, String position_lat, String position_lng){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
-        contentValues.put(COL_2, name);
-        contentValues.put(COL_3, parameter);
+        contentValues.put(COL_2, category);
+        contentValues.put(COL_3, sport);
         contentValues.put(COL_4, unit);
         contentValues.put(COL_5, position_lat);
         contentValues.put(COL_6, position_lng);
@@ -55,12 +55,12 @@ public class DatabaseHelperSports extends SQLiteOpenHelper{
         return res;
     }
 
-    public boolean updateData(String id, String name, String parameter, String unit, String position_lat, String position_lng){
+    public boolean updateData(String id, String category, String sport, String unit, String position_lat, String position_lng){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put(COL_1, id);
-        contentValues.put(COL_2, name);
-        contentValues.put(COL_3, parameter);
+        contentValues.put(COL_2, category);
+        contentValues.put(COL_3, sport);
         contentValues.put(COL_4, unit);
         contentValues.put(COL_5, position_lat);
         contentValues.put(COL_6, position_lng);
@@ -75,7 +75,7 @@ public class DatabaseHelperSports extends SQLiteOpenHelper{
 
     public Cursor selectSingleData(String id){
         SQLiteDatabase db = this.getWritableDatabase();
-        Cursor res = db.rawQuery("select * from " + TABLE_NAME+ " WHERE id ="+id+"", null);
+        Cursor res = db.rawQuery("select * from " + TABLE_NAME+ " WHERE ID ="+id+"", null);
         return res;
     }
 

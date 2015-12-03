@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="endurance_array">
+        <item>3.000 m Lauf</item>
+        <item>10 km Lauf Lauf</item>
+        <item>7,5 km Walking / Nordic Walking</item>
+        <item>800m Schwimmen</item>
+        <item>20 km Radfahren</item>
+    </string-array>
+
+    <string-array name="strength_array">
+        <item>Standweitsprung</item>
+        <item>Medizinball (2 kg)</item>
+        <item>Kugelstoßen (7,26 kg)</item>
+        <item>Steinstoßen (15 kg)</item>
+        <item>(Geräteturnen (Hüft-Aufschwung))</item>
+    </string-array>
+
+    <string-array name="agility_array">
+        <item>100 m Lauf</item>
+        <item>25 m Schwimmen</item>
+        <item>200m Radfahren (fl. Start)</item>
+        <item>(Geräteturnen (Handsstütz-Sprungüberschlag))</item>
+    </string-array>
+
+    <string-array name="coordination_array">
+        <item>Geräteturnen (Sprung mit Drehung)</item>
+        <item>Medizinball Hochsprung</item>
+        <item>Kugelstoßen Weitsprung</item>
+        <item>Steinstoßen Schleuderball</item>
+        <item>(Geräteturnen Seilspringen (Doppeldurchschlag mit oder ohne Zwischensprung)</item>
+    </string-array>
+
+
+
+</resources>

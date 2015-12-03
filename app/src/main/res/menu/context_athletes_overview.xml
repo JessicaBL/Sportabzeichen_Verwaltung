@@ -6,7 +6,7 @@
         <item android:id="@+id/delete_athlete"
             android:title="Sportler löschen" />
         <item android:id="@+id/results_athlete"
-        android:title="Ergebnisse anzeigen"/>
+            android:title="Ergebnisse anzeigen"/>
 
 
     </item>
