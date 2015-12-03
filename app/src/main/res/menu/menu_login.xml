@@ -4,4 +4,7 @@
 
     <item android:id="@+id/action_login" android:title="Login"
         android:orderInCategory="100" app:showAsAction="always" />
+    <item android:id="@+id/action_new_user" android:title="Neuer Prüfer"
+        android:orderInCategory="100" app:showAsAction="never" />
+
 </menu>

@@ -26,9 +26,9 @@
 
     <string-array name="coordination_array">
         <item>Geräteturnen (Sprung mit Drehung)</item>
-        <item>Medizinball Hochsprung</item>
-        <item>Kugelstoßen Weitsprung</item>
-        <item>Steinstoßen Schleuderball</item>
+        <item>Hochsprung</item>
+        <item>Weitsprung</item>
+        <item>Schleuderball</item>
         <item>(Geräteturnen Seilspringen (Doppeldurchschlag mit oder ohne Zwischensprung)</item>
     </string-array>
 

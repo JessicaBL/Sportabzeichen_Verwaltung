@@ -39,8 +39,7 @@ public class AthleteOverview extends AppCompatActivity {
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-
+        
     }
 
     //ListView mit SQLite-Daten erstellen
@@ -90,6 +89,7 @@ public class AthleteOverview extends AppCompatActivity {
                 Intent intent = new Intent(this, ResultsAthlete.class);
                 intent.putExtra("id_athlete", id_athlete);
                 startActivity(intent);
+
         }
         return true;
     }

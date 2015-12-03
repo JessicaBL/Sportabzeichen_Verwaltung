@@ -34,7 +34,6 @@ public class Login extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         myDbPr = new DatabaseHelperPruefer(this);
-        myDbPr.insertData("test","12","0");
         Cursor res = myDbPr.getAllData();
 
         //Alle Einträge wieder auf inaktiv setzen
@@ -99,7 +98,7 @@ public class Login extends AppCompatActivity {
 
                 Toast.makeText(Login.this, "Login erfolgreich", Toast.LENGTH_LONG).show();
 
-                Intent intent = new Intent(this, MainActivity.class);
+                Intent intent = new Intent(Login.this, MainActivity.class);
                 startActivity(intent);
             }
             else{
@@ -108,6 +107,11 @@ public class Login extends AppCompatActivity {
 
 
         }
+        if(id==R.id.action_new_user){
+            Intent intent = new Intent(Login.this, NewUser.class);
+            startActivity(intent);
+        }
+
         return super.onOptionsItemSelected(item);
     }
 }

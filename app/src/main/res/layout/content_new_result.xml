@@ -39,8 +39,8 @@
         android:layout_below="@+id/textView_unit"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
+        android:layout_alignRight="@+id/textView_unit"
+        android:layout_alignEnd="@+id/textView_unit" />
 
     <TextView
         android:layout_width="wrap_content"

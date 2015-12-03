@@ -12,6 +12,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
@@ -35,7 +36,7 @@ public class NewResult extends AppCompatActivity {
     EditText result;
 
     String id_sports = null;
-    String category= null;
+    String category = null;
     String unit = null;
     String sports = null;
 
@@ -62,40 +63,40 @@ public class NewResult extends AppCompatActivity {
 
         Cursor resPr = myDbPr.getActive();
         resPr.moveToFirst();
-        id_pruefer= resPr.getString(0);
+        id_pruefer = resPr.getString(0);
 
 
-        while(res.moveToNext()) {
+        while (res.moveToNext()) {
             id_sports = res.getString(0);
-            category= res.getString(1);
+            category = res.getString(1);
             sports = res.getString(2);
             unit = res.getString(3);
         }
         Resources res_str = getResources();
         String[] sport_name = new String[0];
-        if(category.equals(0)) {
+        if (category.equals(0)) {
             sport_name = res_str.getStringArray(R.array.endurance_array);
         }
-        if(category.equals(1)) {
+        if (category.equals(1)) {
             sport_name = res_str.getStringArray(R.array.strength_array);
         }
-        if(category.equals(2)) {
+        if (category.equals(2)) {
             sport_name = res_str.getStringArray(R.array.agility_array);
         }
-        if(category.equals(3)) {
+        if (category.equals(3)) {
             sport_name = res_str.getStringArray(R.array.coordination_array);
         }
 //        String name = sport_name[Integer.valueOf(sports)];
 //        toolbar = (Toolbar) findViewById(R.id.toolbar);
 //        this.setSupportActionBar(toolbar);
 //        getSupportActionBar().setDisplayShowTitleEnabled(true);
-      //  getSupportActionBar().setTitle("Ergebnis Sportart " +name);
+        //  getSupportActionBar().setTitle("Ergebnis Sportart " +name);
 
-        ArrayList < String > AthletesList = populateSpinner();
+        ArrayList<String> AthletesList = populateSpinner();
 
         spinner_athlete = (Spinner) findViewById(R.id.spinner_athlete);
         result = (EditText) findViewById(R.id.editText_result);
-        ArrayAdapter<String> adapter_athletes= new ArrayAdapter<String>(
+        ArrayAdapter<String> adapter_athletes = new ArrayAdapter<String>(
                 this,
                 android.R.layout.simple_spinner_item,
                 AthletesList);
@@ -103,8 +104,8 @@ public class NewResult extends AppCompatActivity {
         adapter_athletes.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner_athlete.setAdapter(adapter_athletes);
 
-        TextView sports_text=(TextView)findViewById(R.id.textView_unit);
-        sports_text.setText("Ergebnis in "+ unit);
+        TextView sports_text = (TextView) findViewById(R.id.textView_unit);
+        sports_text.setText("Ergebnis in " + unit);
 
 
     }
@@ -114,11 +115,11 @@ public class NewResult extends AppCompatActivity {
 
         ArrayList<String> AthletesList = new ArrayList<String>();
 
-        while(res.moveToNext()){
-            String ID=res.getString(0);
-            String name=res.getString(1);
-            String surname=res.getString(2);
-            AthletesList.add(ID+" - "+name+" "+ surname);
+        while (res.moveToNext()) {
+            String ID = res.getString(0);
+            String name = res.getString(1);
+            String surname = res.getString(2);
+            AthletesList.add(ID + " - " + name + " " + surname);
         }
 
         return AthletesList;
@@ -141,31 +142,32 @@ public class NewResult extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_add_result) {
-            String athlete =String.valueOf(spinner_athlete.getSelectedItem());
+            String athlete = String.valueOf(spinner_athlete.getSelectedItem());
+
             String[] splitResult = athlete.split(" ");
             String id_athlete = splitResult[0];
 
-            if (result.getText().toString().equals("")) {
-                Toast.makeText(NewResult.this, "Bitte Ergebnis eingeben", Toast.LENGTH_LONG).show();
+            if (spinner_athlete.getCount()==0){
+                Toast.makeText(NewResult.this, "Kein Sportler vorhanden", Toast.LENGTH_LONG).show();
             }
-            else {
-                String currentDateString = DateFormat.getDateInstance().format(new Date());
+            else if (result.getText().toString().equals("")) {
+                  Toast.makeText(NewResult.this, "Bitte Ergebnis eingeben", Toast.LENGTH_LONG).show();
+            } else {
+                    String currentDateString = DateFormat.getDateInstance().format(new Date());
 
-                boolean isInserted = myDbRs.insertData(id_athlete.toString(), id_sports.toString()
-                        , result.getText().toString(), currentDateString.toString(), id_pruefer.toString());
+                    boolean isInserted = myDbRs.insertData(id_athlete.toString(), id_sports.toString()
+                            , result.getText().toString(), currentDateString.toString(), id_pruefer.toString());
 
-                if (isInserted == true) {
-                    Toast.makeText(NewResult.this, "Ergebnis eingetragen", Toast.LENGTH_LONG).show();
-                    Intent intent1 = new Intent(NewResult.this, Maps.class);
-                    startActivity(intent1);
+                    if (isInserted == true) {
+                        Toast.makeText(NewResult.this, "Ergebnis eingetragen", Toast.LENGTH_LONG).show();
+                        Intent intent1 = new Intent(NewResult.this, Maps.class);
+                        startActivity(intent1);
+                    } else
+                        Toast.makeText(NewResult.this, "Ergebnis nicht eingetragen", Toast.LENGTH_LONG).show();
                 }
-                else
-                    Toast.makeText(NewResult.this, "Ergebnis nicht eingetragen", Toast.LENGTH_LONG).show();
+
+
             }
-
-
-
-        }
             return super.onOptionsItemSelected(item);
         }
-}
+    }
