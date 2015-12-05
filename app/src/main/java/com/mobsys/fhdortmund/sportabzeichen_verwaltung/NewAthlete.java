@@ -16,6 +16,7 @@ import android.widget.RadioButton;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+
 public class NewAthlete extends AppCompatActivity {
 
     DatabaseHelper myDb;
@@ -29,6 +30,7 @@ public class NewAthlete extends AppCompatActivity {
         setContentView(R.layout.activity_new_athlete);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         myDb = new DatabaseHelper(this);
 
@@ -107,6 +109,15 @@ public class NewAthlete extends AppCompatActivity {
 
 
 }
+        if (id==android.R.id.home){
+
+            Intent intent = new Intent(this, AthleteOverview.class);
+            startActivity(intent);
+            this.finish();
+            return true;
+
+        }
+
         return super.onOptionsItemSelected(item);
     }
 

@@ -19,6 +19,8 @@ public class MainActivity extends AppCompatActivity {
     DatabaseHelper myDb;
     DatabaseHelperPruefer myDbPr;
 
+    String id_athlete;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,6 +50,11 @@ public class MainActivity extends AppCompatActivity {
 
     public void showAthleteOverview(View view){
         Intent intent = new Intent(this, AthleteOverview.class);
+        startActivity(intent);
+    }
+
+    public void showMedal(View view){
+        Intent intent = new Intent(this, Medal.class);
         startActivity(intent);
     }
 

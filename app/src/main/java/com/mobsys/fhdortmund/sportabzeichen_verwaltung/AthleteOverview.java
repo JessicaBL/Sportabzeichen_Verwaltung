@@ -39,6 +39,7 @@ public class AthleteOverview extends AppCompatActivity {
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         
     }
 
@@ -108,6 +109,10 @@ public class AthleteOverview extends AppCompatActivity {
 
 
 
+
+
+
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -130,6 +135,16 @@ public class AthleteOverview extends AppCompatActivity {
         if (id == R.id.action_refresh) {
             recreate();
         }
+
+        if (id==android.R.id.home){
+
+            Intent intent = new Intent(this, MainActivity.class);
+            startActivity(intent);
+                this.finish();
+                return true;
+
+        }
+
         return super.onOptionsItemSelected(item);
     }
 

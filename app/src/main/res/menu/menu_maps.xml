@@ -1,0 +1,26 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools" tools:context=".MainActivity">
+
+    <item android:id="@+id/action_location" android:title="Standort"
+        android:orderInCategory="100" app:showAsAction="always"
+        android:icon="@drawable/ic_my_location_white_24dp"
+        />
+
+    <item android:id="@+id/action_show_all" android:title="Alle Marker"
+        android:orderInCategory="100" app:showAsAction="never"
+        />
+    <item android:id="@+id/action_show_endurance" android:title="Nur Ausdauer-Marker"
+        android:orderInCategory="100" app:showAsAction="never"
+        />
+    <item android:id="@+id/action_show_strength" android:title="Nur Kraft-Marker"
+        android:orderInCategory="100" app:showAsAction="never"
+        />
+    <item android:id="@+id/action_show_agility" android:title="Nur Schnelligkeit-Marker"
+        android:orderInCategory="100" app:showAsAction="never"
+        />
+    <item android:id="@+id/action_show_coordination" android:title="Nur Koordination-Marker"
+        android:orderInCategory="100" app:showAsAction="never"
+        />
+
+</menu>

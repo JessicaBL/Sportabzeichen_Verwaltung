@@ -26,6 +26,8 @@ public class NewUser extends AppCompatActivity {
         setContentView(R.layout.activity_new_user);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
 
         myDbPr = new DatabaseHelperPruefer(this);
         name = (EditText)findViewById(R.id.editText_add_name);
@@ -74,6 +76,15 @@ public class NewUser extends AppCompatActivity {
             }
 
             }
+
+        if (id==android.R.id.home){
+
+            Intent intent = new Intent(this, Login.class);
+            startActivity(intent);
+            this.finish();
+            return true;
+
+        }
         return super.onOptionsItemSelected(item);
     }
 }

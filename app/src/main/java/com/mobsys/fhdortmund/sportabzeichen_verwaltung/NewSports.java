@@ -39,6 +39,8 @@ public class NewSports extends AppCompatActivity {
         setContentView(R.layout.activity_new_sports);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         myDbSp = new DatabaseHelperSports(this);
 
         Intent intent = getIntent();
@@ -128,6 +130,14 @@ public class NewSports extends AppCompatActivity {
 
         }
 
+        if (id==android.R.id.home){
+
+            Intent intent = new Intent(this, Maps.class);
+            startActivity(intent);
+            this.finish();
+            return true;
+
+        }
         return super.onOptionsItemSelected(item);
     }
 

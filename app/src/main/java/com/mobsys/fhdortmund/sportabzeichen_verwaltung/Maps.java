@@ -7,11 +7,21 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.database.Cursor;
+import android.location.Location;
+import android.location.LocationManager;
+import android.provider.SyncStateContract;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.Toast;
+
+import com.google.android.gms.maps.CameraUpdate;
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
@@ -20,12 +30,15 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.util.ArrayList;
+import java.util.List;
 
-public class Maps extends FragmentActivity implements OnMapReadyCallback, GoogleMap.OnMapLongClickListener, GoogleMap.OnInfoWindowClickListener {
+
+public class Maps extends AppCompatActivity implements OnMapReadyCallback, GoogleMap.OnMapLongClickListener, GoogleMap.OnInfoWindowClickListener {
 
     private GoogleMap mMap;
     DatabaseHelperSports myDbSp;
-
+    List<Marker> markers = new ArrayList<Marker>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,10 +48,113 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback, Google
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+
         myDbSp = new DatabaseHelperSports(this);
 
     }
 
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_maps, menu);
+        return true;
+    }
+
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        if(id==R.id.action_location){
+            Location myLocation  = mMap.getMyLocation();
+            if(myLocation!=null){
+                double dLatitude = myLocation.getLatitude();
+                double dLongitude = myLocation.getLongitude();
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(dLatitude, dLongitude), 14));
+            }
+            else
+            {
+                Toast.makeText(this, "Standort kann nicht abgerufen werden", Toast.LENGTH_LONG).show();
+            }
+        }
+
+        if(id==R.id.action_show_endurance){
+            for(Marker marker : markers)
+            {
+                String title = marker.getTitle().toString();
+                String[]splitResult = title.split(" ");
+                String category = splitResult[2];
+                if(!category.equals("Ausdauer:")){
+                    marker.setVisible(false);
+                }
+                else marker.setVisible(true);
+            }
+        }
+
+        if(id==R.id.action_show_strength){
+            for(Marker marker : markers)
+            {
+                String title = marker.getTitle().toString();
+                String[]splitResult = title.split(" ");
+                String category = splitResult[2];
+                if(!category.equals("Kraft:")){
+                    marker.setVisible(false);
+                }
+                else marker.setVisible(true);
+            }
+        }
+        if(id==R.id.action_show_agility){
+            for(Marker marker : markers)
+            {
+                String title = marker.getTitle().toString();
+                String[]splitResult = title.split(" ");
+                String category = splitResult[2];
+                if(!category.equals("Schnelligkeit:")){
+                    marker.setVisible(false);
+                }
+                else marker.setVisible(true);
+            }
+        }
+        if(id==R.id.action_show_coordination){
+            for(Marker marker : markers)
+            {
+                String title = marker.getTitle().toString();
+                String[]splitResult = title.split(" ");
+                String category = splitResult[2];
+                if(!category.equals("Koordination:")){
+                    marker.setVisible(false);
+                }
+                else marker.setVisible(true);
+            }
+        }
+        if(id==R.id.action_show_all){
+            for(Marker marker : markers)
+            {
+                    marker.setVisible(true);
+
+            }
+        }
+        if (id==android.R.id.home){
+
+            Intent intent = new Intent(this, MainActivity.class);
+            startActivity(intent);
+            this.finish();
+            return true;
+
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
 
 
     /**
@@ -64,8 +180,36 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback, Google
         mMap.setOnMapLongClickListener(this);
         mMap.setOnInfoWindowClickListener(this);
         createMarkers();
+
+        checkGPS();
     }
 
+    public void checkGPS() {
+        LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+        if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
+
+        }else{
+            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+            alertDialogBuilder.setMessage("GPS ist deaktiviert, Standort kann nicht abgerufen werden.")
+                    .setCancelable(false)
+                    .setPositiveButton("GPS-Einstellungen",
+                            new DialogInterface.OnClickListener(){
+                                public void onClick(DialogInterface dialog, int id){
+                                    Intent callGPSSettingIntent = new Intent(
+                                            android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                                    startActivity(callGPSSettingIntent);
+                                }
+                            });
+            alertDialogBuilder.setNegativeButton("abbrechen",
+                    new DialogInterface.OnClickListener(){
+                        public void onClick(DialogInterface dialog, int id){
+                            dialog.cancel();
+                        }
+                    });
+            AlertDialog alert = alertDialogBuilder.create();
+            alert.show();
+        }
+    }
 
 
     @Override
@@ -115,34 +259,39 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback, Google
             if(category.equals("0")) {
                 Resources res_end = getResources();
                 String[] endurance = res_end.getStringArray(R.array.endurance_array);
-                mMap.addMarker(new MarkerOptions()
+                Marker marker = mMap.addMarker(new MarkerOptions()
                         .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ROSE))
                         .position(latlng)
                         .title(id + " - Ausdauer: " + endurance[Integer.parseInt(sport)]));
+                markers.add(marker);
             }
             if(category.equals("1")) {
                 Resources res_str = getResources();
                 String[] strength = res_str.getStringArray(R.array.strength_array);
-                mMap.addMarker(new MarkerOptions()
+                Marker marker = mMap.addMarker(new MarkerOptions()
                             .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA))
                         .position(latlng)
                         .title(id + " - Kraft: " + strength[Integer.parseInt(sport)]));
+                markers.add(marker);
+
             }
             if(category.equals("2")) {
                 Resources res_str = getResources();
                 String[] agility = res_str.getStringArray(R.array.agility_array);
-                mMap.addMarker(new MarkerOptions()
+                Marker marker = mMap.addMarker(new MarkerOptions()
                         .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE))
                         .position(latlng)
                         .title(id + " - Schnelligkeit: " + agility[Integer.parseInt(sport)]));
+                markers.add(marker);
             }
             if(category.equals("3")) {
                 Resources res_str = getResources();
                 String[] coordination = res_str.getStringArray(R.array.coordination_array);
-                mMap.addMarker(new MarkerOptions()
+                Marker marker = mMap.addMarker(new MarkerOptions()
                         .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED ))
                         .position(latlng)
                         .title(id + " - Koordination: " + coordination[Integer.parseInt(sport)]));
+                markers.add(marker);
             }
         }
 
@@ -197,6 +346,7 @@ public class Maps extends FragmentActivity implements OnMapReadyCallback, Google
 
         return super.onKeyDown(keycode, e);
     }
+
 
 
 }
