@@ -12,11 +12,12 @@
     <string name="title_activity_new_sports">Neue Disziplin</string>
     <string name="title_activity_new_result">Ergebnis eintragen</string>
     <string name="title_activity_new_user">Prüfer erstellen</string>
-    <string name="title_activity_medal">Medal</string>
+    <string name="title_activity_medal">Ergebnisse auswerten</string>
     <string name="endurance">Ausdauer</string>
     <string name="strength">Kraft</string>
     <string name="agility">Schnelligkeit</string>
     <string name="coordination">Koordination</string>
-    <string name="title_activity_medal__list_view">Medal_ListView</string>
+    <string name="title_activity_medal__list_view"></string>
+    <string name="title_activity_ds">Deutsches Sportabzeichen</string>
 
 </resources>
