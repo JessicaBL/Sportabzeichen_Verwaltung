@@ -260,7 +260,7 @@ public class Maps extends AppCompatActivity implements OnMapReadyCallback, Googl
                 Resources res_end = getResources();
                 String[] endurance = res_end.getStringArray(R.array.endurance_array);
                 Marker marker = mMap.addMarker(new MarkerOptions()
-                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ROSE))
+                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_VIOLET))
                         .position(latlng)
                         .title(id + " - Ausdauer: " + endurance[Integer.parseInt(sport)]));
                 markers.add(marker);
@@ -269,7 +269,7 @@ public class Maps extends AppCompatActivity implements OnMapReadyCallback, Googl
                 Resources res_str = getResources();
                 String[] strength = res_str.getStringArray(R.array.strength_array);
                 Marker marker = mMap.addMarker(new MarkerOptions()
-                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA))
+                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW))
                         .position(latlng)
                         .title(id + " - Kraft: " + strength[Integer.parseInt(sport)]));
                 markers.add(marker);

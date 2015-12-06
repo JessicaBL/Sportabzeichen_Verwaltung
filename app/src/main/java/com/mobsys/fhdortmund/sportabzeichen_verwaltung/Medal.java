@@ -17,6 +17,7 @@ import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ExpandableListView;
+import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.RadioButton;
 import android.widget.Spinner;
@@ -69,22 +70,27 @@ public class Medal extends AppCompatActivity {
         adapter_athletes.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner_athlete.setAdapter(adapter_athletes);
 
-        CheckBox checkBox_endurance = (CheckBox) findViewById(R.id.checkBox_endurance);
-        CheckBox checkBox_strength = (CheckBox) findViewById(R.id.checkBox_strength);
-        CheckBox checkBox_agility = (CheckBox) findViewById(R.id.checkBox_strength_agility);
-        CheckBox checkBox_coordination = (CheckBox) findViewById(R.id.checkBox_coordination);
-
-        checkBox_endurance.setClickable(false);
-        checkBox_strength.setClickable(false);
-        checkBox_agility.setClickable(false);
-        checkBox_coordination.setClickable(false);
-
         spinner_athlete.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 String item = String.valueOf(spinner_athlete.getSelectedItem());
                 final String[] split_Result = item.split(" ");
                 athlete_id = split_Result[0];
+
+                ImageView img_en= (ImageView) findViewById(R.id.imageView_endurance);
+                ImageView img_str= (ImageView) findViewById(R.id.imageView_strength);
+                ImageView img_ag= (ImageView) findViewById(R.id.imageView_agility);
+                ImageView img_co= (ImageView) findViewById(R.id.imageView_coordination);
+
+                img_en.setImageResource(R.drawable.icon_white);
+                img_str.setImageResource(R.drawable.icon_white);
+                img_ag.setImageResource(R.drawable.icon_white);
+                img_co.setImageResource(R.drawable.icon_white);
+
+                endurance="";
+                strength="";
+                agility="";
+                coordination="";
 
                 // get the listview
                 expListView = (ExpandableListView) findViewById(R.id.lvExp);
@@ -104,18 +110,13 @@ public class Medal extends AppCompatActivity {
                     public boolean onChildClick(ExpandableListView parent, View v,
                                                 int groupPosition, int childPosition, long id) {
 
-                        CheckBox checkBox_endurance = (CheckBox) findViewById(R.id.checkBox_endurance);
-                        CheckBox checkBox_strength = (CheckBox) findViewById(R.id.checkBox_strength);
-                        CheckBox checkBox_agility = (CheckBox) findViewById(R.id.checkBox_strength_agility);
-                        CheckBox checkBox_coordination = (CheckBox) findViewById(R.id.checkBox_coordination);
-
-                        checkBox_endurance.setClickable(false);
-                        checkBox_strength.setClickable(false);
-                        checkBox_agility.setClickable(false);
-                        checkBox_coordination.setClickable(false);
+                        ImageView img_en= (ImageView) findViewById(R.id.imageView_endurance);
+                        ImageView img_str= (ImageView) findViewById(R.id.imageView_strength);
+                        ImageView img_ag= (ImageView) findViewById(R.id.imageView_agility);
+                        ImageView img_co= (ImageView) findViewById(R.id.imageView_coordination);
 
                         if(groupPosition==0){
-                            checkBox_endurance.setChecked(false);
+                            img_en.setImageResource(R.drawable.icon_white);
                             endurance = listDataHeader.get(groupPosition)
                                         + " : "
                                         + listDataChild.get(
@@ -127,11 +128,14 @@ public class Medal extends AppCompatActivity {
                                 endurance="";
                             }
                             else{
-                                checkBox_endurance.setChecked(true);
+                                if(endurance.contains("Bronze"))img_en.setImageResource(R.drawable.icon_bronze);
+                                if(endurance.contains("Silber"))img_en.setImageResource(R.drawable.icon_silver);
+                                if(endurance.contains("Gold"))img_en.setImageResource(R.drawable.icon_gold);
+
                             }
                         }
                         if(groupPosition==1){
-                            checkBox_strength.setChecked(false);
+                            img_str.setImageResource(R.drawable.icon_white);
                             strength = listDataHeader.get(groupPosition)
                                     + " : "
                                     + listDataChild.get(
@@ -143,10 +147,13 @@ public class Medal extends AppCompatActivity {
                                 strength="";
                             }
                             else{
-                                checkBox_strength.setChecked(true);
-                            }                        }
+                                if(strength.contains("Bronze"))img_str.setImageResource(R.drawable.icon_bronze);
+                                if(strength.contains("Silber"))img_str.setImageResource(R.drawable.icon_silver);
+                                if(strength.contains("Gold"))img_str.setImageResource(R.drawable.icon_gold);
+                            }
+                        }
                         if(groupPosition==2){
-                            checkBox_agility.setChecked(false);
+                            img_ag.setImageResource(R.drawable.icon_white);
                             agility = listDataHeader.get(groupPosition)
                                     + " : "
                                     + listDataChild.get(
@@ -158,10 +165,13 @@ public class Medal extends AppCompatActivity {
                                 agility="";
                             }
                             else{
-                                checkBox_agility.setChecked(true);
-                            }                        }
+                                if(agility.contains("Bronze"))img_ag.setImageResource(R.drawable.icon_bronze);
+                                if(agility.contains("Silber"))img_ag.setImageResource(R.drawable.icon_silver);
+                                if(agility.contains("Gold"))img_ag.setImageResource(R.drawable.icon_gold);
+                            }
+                        }
                         if(groupPosition==3){
-                            checkBox_coordination.setChecked(false);
+                            img_co.setImageResource(R.drawable.icon_white);
                             coordination = listDataHeader.get(groupPosition)
                                     + " : "
                                     + listDataChild.get(
@@ -173,8 +183,9 @@ public class Medal extends AppCompatActivity {
                                 coordination="";
                             }
                             else{
-                                checkBox_coordination.setChecked(true);
-                            }                        }
+                                if(coordination.contains("Bronze"))img_co.setImageResource(R.drawable.icon_bronze);
+                                if(coordination.contains("Silber"))img_co.setImageResource(R.drawable.icon_silver);
+                                if(coordination.contains("Gold"))img_co.setImageResource(R.drawable.icon_gold);                                    }                        }
 
                         return false;
 

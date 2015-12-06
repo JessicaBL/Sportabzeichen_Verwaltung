@@ -43,7 +43,8 @@
         android:layout_alignTop="@+id/radioButton_coordination"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:onClick="onRadioButtonAgilityClicked"/>
+        android:onClick="onRadioButtonAgilityClicked"
+        android:layout_marginBottom="25dp" />
     />
 
     <RadioButton

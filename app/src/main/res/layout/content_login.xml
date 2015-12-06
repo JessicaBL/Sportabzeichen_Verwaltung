@@ -20,7 +20,8 @@
         android:id="@+id/editText_pruefer_name"
         android:layout_below="@+id/textView13"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentStart="true"
+        android:layout_marginBottom="25dp" />
 
 
     <EditText
@@ -31,7 +32,8 @@
         android:id="@+id/editText_pruefer_password"
         android:layout_below="@+id/textView14"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentStart="true"
+        android:layout_marginBottom="25dp" />
 
     <TextView
         android:layout_width="wrap_content"

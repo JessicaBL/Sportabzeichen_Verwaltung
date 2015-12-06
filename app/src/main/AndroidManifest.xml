@@ -79,10 +79,6 @@
             android:label="@string/title_activity_medal"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".Medal_ListView"
-            android:label="@string/title_activity_medal__list_view"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
             android:name=".DSA"
             android:label="@string/title_activity_ds"
             android:theme="@style/AppTheme.NoActionBar" >
