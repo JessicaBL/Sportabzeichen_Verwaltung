@@ -6,5 +6,7 @@
         android:orderInCategory="100" app:showAsAction="always" />
     <item android:id="@+id/action_new_user" android:title="Neuer Prüfer"
         android:orderInCategory="100" app:showAsAction="never" />
+    <item android:id="@+id/action_close_app" android:title="Schließen"
+        android:orderInCategory="100" app:showAsAction="never" />
 
 </menu>

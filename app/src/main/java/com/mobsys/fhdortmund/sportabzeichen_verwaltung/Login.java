@@ -112,6 +112,10 @@ public class Login extends AppCompatActivity {
             startActivity(intent);
         }
 
+        if(id==R.id.action_close_app){
+            finish();
+        }
+
         return super.onOptionsItemSelected(item);
     }
 }
