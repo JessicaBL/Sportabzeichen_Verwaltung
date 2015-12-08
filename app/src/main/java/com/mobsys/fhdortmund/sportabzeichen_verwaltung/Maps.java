@@ -2,6 +2,7 @@ package com.mobsys.fhdortmund.sportabzeichen_verwaltung;
 
 import android.Manifest;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -39,6 +40,8 @@ public class Maps extends AppCompatActivity implements OnMapReadyCallback, Googl
     private GoogleMap mMap;
     DatabaseHelperSports myDbSp;
     List<Marker> markers = new ArrayList<Marker>();
+    final String gpsLocationProvider = LocationManager.GPS_PROVIDER;
+    final String networkLocationProvider = LocationManager.NETWORK_PROVIDER;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,8 +56,9 @@ public class Maps extends AppCompatActivity implements OnMapReadyCallback, Googl
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-
         myDbSp = new DatabaseHelperSports(this);
+
+
 
     }
 
@@ -180,9 +184,25 @@ public class Maps extends AppCompatActivity implements OnMapReadyCallback, Googl
         mMap.setOnMapLongClickListener(this);
         mMap.setOnInfoWindowClickListener(this);
         createMarkers();
-
         checkGPS();
+        LocationManager locationManager =
+                (LocationManager)this.getSystemService(Context.LOCATION_SERVICE);
+        Location lastKnownLocation_byGps =
+                locationManager.getLastKnownLocation(gpsLocationProvider);
+        Location lastKnownLocation_byNetwork =
+                locationManager.getLastKnownLocation(networkLocationProvider);
+        if(lastKnownLocation_byGps!=null){
+            double dLatitude = lastKnownLocation_byGps.getLatitude();
+            double dLongitude = lastKnownLocation_byGps.getLongitude();
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(dLatitude, dLongitude), 14));
+        }
+        else if(lastKnownLocation_byNetwork!=null){
+            double dLatitude = lastKnownLocation_byNetwork.getLatitude();
+            double dLongitude = lastKnownLocation_byNetwork.getLongitude();
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(dLatitude, dLongitude), 14));
+        }
     }
+
 
     public void checkGPS() {
         LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);

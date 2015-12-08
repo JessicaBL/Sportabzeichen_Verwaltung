@@ -22,7 +22,6 @@ public class DatabaseHelperPruefer extends SQLiteOpenHelper {
     public static final String COL_3 = "PASSWORD";
     public static final String COL_4 = "ACTIVE";
 
-
     public DatabaseHelperPruefer(Context context) {
         super(context, DATABASE_NAME, null, 1);
     }

@@ -12,16 +12,13 @@
     <string-array name="strength_array">
         <item>Standweitsprung</item>
         <item>Medizinball (2 kg)</item>
-        <item>Kugelstoßen (7,26 kg)</item>
         <item>Steinstoßen (15 kg)</item>
-        <item>(Geräteturnen (Hüft-Aufschwung))</item>
     </string-array>
 
     <string-array name="agility_array">
         <item>100 m Lauf</item>
         <item>25 m Schwimmen</item>
         <item>200m Radfahren (fl. Start)</item>
-        <item>(Geräteturnen (Handsstütz-Sprungüberschlag))</item>
     </string-array>
 
     <string-array name="coordination_array">
@@ -29,7 +26,6 @@
         <item>Hochsprung</item>
         <item>Weitsprung</item>
         <item>Schleuderball</item>
-        <item>(Geräteturnen Seilspringen (Doppeldurchschlag mit oder ohne Zwischensprung)</item>
     </string-array>
 
 
