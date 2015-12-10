@@ -1,5 +1,7 @@
 package com.mobsys.fhdortmund.sportabzeichen_verwaltung;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -18,12 +20,14 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class AthleteOverview extends AppCompatActivity {
 
     DatabaseHelper myDb;
     EditText editName, editSurname;
+    ArrayList<String> AthletesList = new ArrayList<String>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,7 +38,9 @@ public class AthleteOverview extends AppCompatActivity {
 
         editName = (EditText) findViewById(R.id.editText_name);
         editSurname = (EditText) findViewById(R.id.editText_surname);
-        populateListView();
+        ListView lv = (ListView)findViewById(R.id.listView_athletes);
+
+        populateListView(lv, AthletesList);
 
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -44,10 +50,9 @@ public class AthleteOverview extends AppCompatActivity {
     }
 
     //ListView mit SQLite-Daten erstellen
-    public void populateListView(){
+    public void populateListView(ListView lv, ArrayList AthletesList){
         Cursor res = myDb.getAllData();
 
-        ArrayList<String> AthletesList = new ArrayList<String>();
 
         while(res.moveToNext()){
             String id=res.getString(0);
@@ -59,7 +64,6 @@ public class AthleteOverview extends AppCompatActivity {
         }
         ListAdapter adapter = new ArrayAdapter<>(AthleteOverview.this, android.R.layout.simple_list_item_1,AthletesList);
 
-        final ListView lv = (ListView)findViewById(R.id.listView_athletes);
         lv.setAdapter(adapter);
         registerForContextMenu(lv);
 
@@ -95,6 +99,51 @@ public class AthleteOverview extends AppCompatActivity {
         return true;
     }
 
+    public void search(final ArrayList AthletesList) {
+
+        ListAdapter adapter = new ArrayAdapter<>(AthleteOverview.this, android.R.layout.simple_list_item_1,AthletesList);
+        final ListView lv = (ListView)findViewById(R.id.listView_athletes);
+        lv.setAdapter(adapter);
+        registerForContextMenu(lv);
+
+        AlertDialog.Builder alert = new AlertDialog.Builder(AthleteOverview.this);
+        alert.setTitle("Nach Sportler suchen");
+        final EditText input = new EditText(AthleteOverview.this);
+        alert.setView(input);
+        alert.setPositiveButton("Suche", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String result = input.getText().toString();
+                ArrayList<String> Original_List = AthletesList;
+                ArrayList<String> AthletesList_Search = new ArrayList<String>();
+
+                for (String s : Original_List) {
+                    if (s.contains(result)==true) {
+                        AthletesList_Search.add(s);
+                    }
+                }
+
+                if (AthletesList_Search.isEmpty()) {
+                    Toast.makeText(AthleteOverview.this, "Keinen Sportler gefunden", Toast.LENGTH_LONG).show();
+                    dialog.cancel();
+                } else {
+                    ListAdapter adapter = new ArrayAdapter<>(AthleteOverview.this, android.R.layout.simple_list_item_1,AthletesList_Search);
+                    lv.setAdapter(adapter);
+                    registerForContextMenu(lv);
+
+                }
+            }
+
+        });
+        alert.setNegativeButton("abbrechen", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+        alert.show();
+    }
+
     @Override
     public boolean onKeyDown(int keycode, KeyEvent e) {
         switch(keycode) {
@@ -127,6 +176,7 @@ public class AthleteOverview extends AppCompatActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
+
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_new_athlete) {
             Intent intent = new Intent(this, NewAthlete.class);
@@ -134,6 +184,10 @@ public class AthleteOverview extends AppCompatActivity {
         }
         if (id == R.id.action_refresh) {
             recreate();
+        }
+
+        if(id ==R.id.action_search_ao){
+            search(AthletesList);
         }
 
         if (id==android.R.id.home){
@@ -147,5 +201,7 @@ public class AthleteOverview extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
+
 
 }

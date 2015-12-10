@@ -14,8 +14,6 @@ public class DatabaseHelperSports extends SQLiteOpenHelper{
     public static final String COL_2= "CATEGORY";
     public static final String COL_3= "SPORT";
     public static final String COL_4= "UNIT";
-    public static final String COL_5= "POSITION_LAT";
-    public static final String COL_6= "POSITION_LNG";
 
 
 
@@ -25,7 +23,7 @@ public class DatabaseHelperSports extends SQLiteOpenHelper{
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL("create table " + TABLE_NAME + " (ID INTEGER PRIMARY KEY AUTOINCREMENT,CATEGORY TEXT,SPORT TEXT, UNIT TEXT, POSITION_LAT TEXT, POSITION_LNG TEXT)");
+        db.execSQL("create table " + TABLE_NAME + " (ID INTEGER PRIMARY KEY AUTOINCREMENT,CATEGORY TEXT,SPORT TEXT, UNIT TEXT)");
     }
 
     @Override
@@ -34,14 +32,12 @@ public class DatabaseHelperSports extends SQLiteOpenHelper{
         onCreate(db);
     }
 
-    public boolean insertData(String category, String sport, String unit, String position_lat, String position_lng){
+    public boolean insertData(String category, String sport, String unit){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put(COL_2, category);
         contentValues.put(COL_3, sport);
         contentValues.put(COL_4, unit);
-        contentValues.put(COL_5, position_lat);
-        contentValues.put(COL_6, position_lng);
         long  result = db.insert(TABLE_NAME, null, contentValues);
         if(result==-1)
             return false;
@@ -55,15 +51,13 @@ public class DatabaseHelperSports extends SQLiteOpenHelper{
         return res;
     }
 
-    public boolean updateData(String id, String category, String sport, String unit, String position_lat, String position_lng){
+    public boolean updateData(String id, String category, String sport, String unit){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put(COL_1, id);
         contentValues.put(COL_2, category);
         contentValues.put(COL_3, sport);
         contentValues.put(COL_4, unit);
-        contentValues.put(COL_5, position_lat);
-        contentValues.put(COL_6, position_lng);
         db.update(TABLE_NAME, contentValues, "ID = ?", new String[] { id });
         return true;
     }

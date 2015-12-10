@@ -1,6 +1,8 @@
 package com.mobsys.fhdortmund.sportabzeichen_verwaltung;
 
 import android.app.ActionBar;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.database.Cursor;
@@ -14,11 +16,14 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.lang.reflect.Array;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -42,6 +47,8 @@ public class NewResult extends AppCompatActivity {
 
     String id_pruefer = null;
 
+    ArrayList<String> AthletesList = new ArrayList<>();
+    ArrayAdapter<String> adapter_athletes;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,11 +82,11 @@ public class NewResult extends AppCompatActivity {
 
         customizeSupportActionBar(category, sports);
 
-        ArrayList<String> AthletesList = populateSpinner();
+        AthletesList = populateSpinner();
 
         spinner_athlete = (Spinner) findViewById(R.id.spinner_athlete);
         result = (EditText) findViewById(R.id.editText_result);
-        ArrayAdapter<String> adapter_athletes = new ArrayAdapter<String>(
+        adapter_athletes = new ArrayAdapter<String>(
                 this,
                 android.R.layout.simple_spinner_item,
                 AthletesList);
@@ -90,7 +97,60 @@ public class NewResult extends AppCompatActivity {
         TextView sports_text = (TextView) findViewById(R.id.textView_unit);
         sports_text.setText("Ergebnis in " + unit);
 
+        final ImageButton button = (ImageButton) findViewById(R.id.button_search);
+        button.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
 
+                search(adapter_athletes, AthletesList);
+
+
+            }
+        });
+    }
+
+    public void search(ArrayAdapter adapter_athletes, final ArrayList AthletesList) {
+
+        spinner_athlete.setAdapter(adapter_athletes);
+
+        AlertDialog.Builder alert = new AlertDialog.Builder(NewResult.this);
+        alert.setTitle("Nach Sportler suchen");
+        final EditText input = new EditText(NewResult.this);
+        alert.setView(input);
+        alert.setPositiveButton("Suche", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String result = input.getText().toString();
+                ArrayList<String> Original_List = AthletesList;
+                ArrayList<String> AthletesList_Search = new ArrayList<String>();
+
+                for (String s : Original_List) {
+                    if (s.contains(result)==true) {
+                        AthletesList_Search.add(s);
+                    }
+                }
+
+                if (AthletesList_Search.isEmpty()) {
+                    Toast.makeText(NewResult.this, "Keinen Sportler gefunden", Toast.LENGTH_LONG).show();
+                    dialog.cancel();
+                } else {
+                    ArrayAdapter<String> adapter_athletes_search = new ArrayAdapter<String>(
+                            NewResult.this,
+                            android.R.layout.simple_spinner_item,
+                            AthletesList_Search);
+
+                    adapter_athletes_search.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                    spinner_athlete.setAdapter(adapter_athletes_search);
+                }
+            }
+
+        });
+        alert.setNegativeButton("abbrechen", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+        alert.show();
     }
 
     public void customizeSupportActionBar(String sport_category, String sport_name) {
@@ -132,6 +192,7 @@ public class NewResult extends AppCompatActivity {
         return AthletesList;
 
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -175,6 +236,10 @@ public class NewResult extends AppCompatActivity {
 
 
             }
+
+        if (id==R.id.action_search){
+            search(adapter_athletes,AthletesList);
+        }
         if (id==android.R.id.home){
 
             Intent intent = new Intent(this, Maps.class);

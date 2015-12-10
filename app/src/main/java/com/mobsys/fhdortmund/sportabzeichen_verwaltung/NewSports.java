@@ -226,7 +226,7 @@ public class NewSports extends AppCompatActivity {
                         unit="m";
                 }
 
-                 boolean isInserted_sp = myDbSp.insertData(category, sport_id, unit, lat,lng);
+                 boolean isInserted_sp = myDbSp.insertData(category, sport_id, unit);
 
                     if (isInserted_sp == true) {
                         Cursor res = myDbSp.getAllData();

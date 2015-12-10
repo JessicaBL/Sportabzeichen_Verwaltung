@@ -288,7 +288,7 @@ public class Maps extends AppCompatActivity implements OnMapReadyCallback, Googl
             Marker marker = mMap.addMarker(new MarkerOptions()
                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED))
                             .position(latlng)
-                           .title(id+" " + name));
+                           .title(id+" - " + name));
                             markers.add(marker);
 
 //            if(category.equals("0")) {
@@ -423,7 +423,7 @@ public class Maps extends AppCompatActivity implements OnMapReadyCallback, Googl
                 sports_name=coordination[Integer.parseInt(sports)];
             }
 
-            SpinnerList.add(id+" "+category_name+": "+sports_name);
+            SpinnerList.add(id+" - "+category_name+": "+sports_name);
         }
         return SpinnerList;
     }

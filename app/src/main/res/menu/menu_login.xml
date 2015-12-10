@@ -3,7 +3,9 @@
     xmlns:tools="http://schemas.android.com/tools" tools:context=".MainActivity">
 
     <item android:id="@+id/action_login" android:title="Login"
-        android:orderInCategory="100" app:showAsAction="always" />
+        android:orderInCategory="100" app:showAsAction="always"
+        android:icon="@drawable/login"
+        />
     <item android:id="@+id/action_new_user" android:title="Neuer Prüfer"
         android:orderInCategory="100" app:showAsAction="never" />
     <item android:id="@+id/action_close_app" android:title="Schließen"

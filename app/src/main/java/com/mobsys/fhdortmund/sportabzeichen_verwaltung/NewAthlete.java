@@ -92,8 +92,8 @@ public class NewAthlete extends AppCompatActivity {
             else {
                 boolean isInserted = myDb.insertData(editName.getText().toString(),
                         editSurname.getText().toString(),
-                        String.valueOf(spinnerBirthdayDay.getSelectedItem()) + "." +
-                                String.valueOf(spinnerBirthdayMonth.getSelectedItem()) + "." +
+                        String.valueOf(spinnerBirthdayDay.getSelectedItem()) + ". " +
+                                String.valueOf(spinnerBirthdayMonth.getSelectedItem()) + " " +
                                 String.valueOf(spinnerBirthdayYear.getSelectedItem()),
                         sex);
 

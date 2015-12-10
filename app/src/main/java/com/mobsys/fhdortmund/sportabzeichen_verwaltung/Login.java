@@ -33,6 +33,8 @@ public class Login extends AppCompatActivity {
         setContentView(R.layout.activity_login);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setTitle("DSA-App");
+        getSupportActionBar().setSubtitle("Login");
 
         myDbPr = new DatabaseHelperPruefer(this);
         Cursor res = myDbPr.getAllData();
