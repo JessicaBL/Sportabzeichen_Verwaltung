@@ -127,8 +127,9 @@
         android:id="@+id/spinner_year"
         android:layout_alignBottom="@+id/spinner_month"
         android:layout_toRightOf="@+id/spinner_month"
-        android:layout_toEndOf="@+id/spinner_month"
         android:layout_alignTop="@+id/spinner_month"
-        android:layout_marginLeft="10dp" />
+        android:layout_marginLeft="10dp"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
 
 </RelativeLayout>

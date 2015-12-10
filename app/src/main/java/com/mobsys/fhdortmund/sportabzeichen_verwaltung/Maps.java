@@ -16,9 +16,16 @@ import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.ListAdapter;
+import android.widget.Spinner;
+import android.widget.SpinnerAdapter;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdate;
@@ -31,6 +38,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,6 +47,7 @@ public class Maps extends AppCompatActivity implements OnMapReadyCallback, Googl
 
     private GoogleMap mMap;
     DatabaseHelperSports myDbSp;
+    DatabaseHelperStation myDbSt;
     List<Marker> markers = new ArrayList<Marker>();
     final String gpsLocationProvider = LocationManager.GPS_PROVIDER;
     final String networkLocationProvider = LocationManager.NETWORK_PROVIDER;
@@ -57,6 +66,7 @@ public class Maps extends AppCompatActivity implements OnMapReadyCallback, Googl
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         myDbSp = new DatabaseHelperSports(this);
+        myDbSt = new DatabaseHelperStation(this);
 
 
 
@@ -245,8 +255,8 @@ public class Maps extends AppCompatActivity implements OnMapReadyCallback, Googl
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 Intent intent = new Intent(Maps.this, NewSports.class);
-                intent.putExtra("lat", lat);
-                intent.putExtra("lng", lng);
+                intent.putExtra("lat", String.valueOf(lat));
+                intent.putExtra("lng", String.valueOf(lng));
                 startActivity(intent);
 
 
@@ -264,97 +274,160 @@ public class Maps extends AppCompatActivity implements OnMapReadyCallback, Googl
     }
 
     public void createMarkers() {
-        Cursor res = myDbSp.getAllData();
+        Cursor res = myDbSt.getAllData();
 
         while(res.moveToNext()){
             String id=res.getString(0);
-            String category=res.getString(1);
-            String sport=res.getString(2);
-            String unit = res.getString(3);
-            String position_lat=res.getString(4);
-            String position_lng=res.getString(5);
+            String name=res.getString(1);
+            String position_lat=res.getString(2);
+            String position_lng=res.getString(3);
 
-            LatLng latlng = new LatLng(Double.parseDouble(position_lat), Double.parseDouble(position_lng));
 
-            if(category.equals("0")) {
-                Resources res_end = getResources();
-                String[] endurance = res_end.getStringArray(R.array.endurance_array);
-                Marker marker = mMap.addMarker(new MarkerOptions()
-                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_VIOLET))
-                        .position(latlng)
-                        .title(id + " - Ausdauer: " + endurance[Integer.parseInt(sport)]));
-                markers.add(marker);
-            }
-            if(category.equals("1")) {
-                Resources res_str = getResources();
-                String[] strength = res_str.getStringArray(R.array.strength_array);
-                Marker marker = mMap.addMarker(new MarkerOptions()
-                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW))
-                        .position(latlng)
-                        .title(id + " - Kraft: " + strength[Integer.parseInt(sport)]));
-                markers.add(marker);
+              LatLng latlng = new LatLng(Double.parseDouble(position_lat), Double.parseDouble(position_lng));
 
-            }
-            if(category.equals("2")) {
-                Resources res_str = getResources();
-                String[] agility = res_str.getStringArray(R.array.agility_array);
-                Marker marker = mMap.addMarker(new MarkerOptions()
-                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE))
-                        .position(latlng)
-                        .title(id + " - Schnelligkeit: " + agility[Integer.parseInt(sport)]));
-                markers.add(marker);
-            }
-            if(category.equals("3")) {
-                Resources res_str = getResources();
-                String[] coordination = res_str.getStringArray(R.array.coordination_array);
-                Marker marker = mMap.addMarker(new MarkerOptions()
-                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED ))
-                        .position(latlng)
-                        .title(id + " - Koordination: " + coordination[Integer.parseInt(sport)]));
-                markers.add(marker);
-            }
+            Marker marker = mMap.addMarker(new MarkerOptions()
+                           .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED))
+                            .position(latlng)
+                           .title(id+" " + name));
+                            markers.add(marker);
+
+//            if(category.equals("0")) {
+//                Resources res_end = getResources();
+//                String[] endurance = res_end.getStringArray(R.array.endurance_array);
+//                Marker marker = mMap.addMarker(new MarkerOptions()
+//                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_VIOLET))
+//                        .position(latlng)
+//                        .title(id + " - Ausdauer: " + endurance[Integer.parseInt(sport)]));
+//                markers.add(marker);
+//            }
+
         }
 
     }
 
     @Override
     public void onInfoWindowClick(final Marker marker) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Disziplin-Optionen")
+
+
+        LayoutInflater li = LayoutInflater.from(Maps.this);
+
+        final View promptsView = li.inflate(R.layout.dialog_layout, null);
+
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(Maps.this);
+
+        alertDialogBuilder.setView(promptsView);
+
+
+        final Spinner mSpinner = (Spinner) promptsView.findViewById(R.id.spinner_dialog);
+
+
+        alertDialogBuilder.setTitle("Disziplin auswählen")
                 .setItems(R.array.sports, new DialogInterface.OnClickListener(){
                     public void onClick(DialogInterface dialog, int which){
 
-                        String title = marker.getTitle();
-                        String[] splitResult = title.split(" ");
-                        String result = splitResult[0];
-
                         if (which ==0){
                             //eintragen
+                            String item = (String)mSpinner.getSelectedItem();
+                            String[]splitResult=item.split(" ");
                             Intent intent = new Intent(Maps.this, NewResult.class);
-                            intent.putExtra("id", result);
+                            intent.putExtra("id", splitResult[0]);
                             startActivity(intent);
                         }
 
                         if(which==1){
                             //alle anzeigen
+                            String item = (String)mSpinner.getSelectedItem();
+                            String[]splitResult=item.split(" ");
                             Intent intent = new Intent(Maps.this, ShowResults.class);
-                            intent.putExtra("id", result);
+                            intent.putExtra("id", splitResult[0]);
                             startActivity(intent);
                         }
 
                         else if (which ==2){
                             //löschen
 
-                            myDbSp.deleteData(result);
+                            //myDbSp.deleteData(result);
 
-                            marker.remove();
+                            //marker.remove();
                         }
 
                     }
                 });
-        AlertDialog alert = builder.create();
-        alert.show();
+
+
+
+        String title = marker.getTitle();
+        String[] splitResult = title.split(" ");
+        String result = splitResult[0];
+        ArrayList<String> SpinnerList = CreateSportsList(result);
+
+        final ArrayAdapter<String> adp = new ArrayAdapter<String>(Maps.this,
+                android.R.layout.simple_spinner_dropdown_item, SpinnerList);
+
+        mSpinner.setAdapter(adp);
+        final AlertDialog alertDialog = alertDialogBuilder.create();
+        alertDialog.show();
+
+
     }
+
+    public  ArrayList<String> CreateSportsList(String id_sports) {
+        Cursor res = myDbSt.selectSingleData(id_sports);
+        res.moveToFirst();
+        String all_sports=res.getString(4);
+
+        String split_all_sports[] = all_sports.split(",");
+
+        ArrayList<String> SpinnerList = new ArrayList<String>();
+
+        for (String s:split_all_sports){
+
+            Cursor res_sp = myDbSp.selectSingleData(s);
+            res_sp.moveToFirst();
+            String id=res_sp.getString(0);
+            String category= res_sp.getString(1);
+            String sports= res_sp.getString(2);
+            String category_name="";
+            String sports_name="";
+
+            if(category.equals("0")){
+                Resources res_end = getResources();
+                String[] endurance = res_end.getStringArray(R.array.endurance_array);
+
+                category_name="Ausdauer";
+                sports_name=endurance[Integer.parseInt(sports)];
+            }
+
+            if(category.equals("1")){
+                Resources res_str = getResources();
+                String[] strength = res_str.getStringArray(R.array.strength_array);
+
+                category_name="Kraft";
+                sports_name=strength[Integer.parseInt(sports)];
+            }
+
+            if(category.equals("2")){
+                Resources res_agil = getResources();
+                String[] agility = res_agil.getStringArray(R.array.agility_array);
+
+                category_name="Schnelligkeit";
+                sports_name=agility[Integer.parseInt(sports)];
+
+            }
+
+            if(category.equals("3")){
+                Resources res_coord = getResources();
+                String[] coordination = res_coord.getStringArray(R.array.coordination_array);
+
+                category_name="Koordination";
+                sports_name=coordination[Integer.parseInt(sports)];
+            }
+
+            SpinnerList.add(id+" "+category_name+": "+sports_name);
+        }
+        return SpinnerList;
+    }
+
     @Override
     public boolean onKeyDown(int keycode, KeyEvent e) {
         switch(keycode) {

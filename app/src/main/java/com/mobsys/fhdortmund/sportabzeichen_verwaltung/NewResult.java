@@ -57,16 +57,14 @@ public class NewResult extends AppCompatActivity {
         myDbRs = new DatabaseHelperResults(this);
         myDbPr = new DatabaseHelperPruefer(this);
 
-
-        Intent intent = getIntent();
-        id = intent.getStringExtra("id");
-
-        Cursor res = myDbSp.selectSingleData(id);
-
         Cursor resPr = myDbPr.getActive();
         resPr.moveToFirst();
         id_pruefer = resPr.getString(0);
 
+
+        Intent intent = getIntent();
+        id = intent.getStringExtra("id");
+        Cursor res = myDbSp.selectSingleData(id);
 
         while (res.moveToNext()) {
             id_sports = res.getString(0);
@@ -74,25 +72,8 @@ public class NewResult extends AppCompatActivity {
             sports = res.getString(2);
             unit = res.getString(3);
         }
-        Resources res_str = getResources();
-        String[] sport_name = new String[0];
-        if (category.equals(0)) {
-            sport_name = res_str.getStringArray(R.array.endurance_array);
-        }
-        if (category.equals(1)) {
-            sport_name = res_str.getStringArray(R.array.strength_array);
-        }
-        if (category.equals(2)) {
-            sport_name = res_str.getStringArray(R.array.agility_array);
-        }
-        if (category.equals(3)) {
-            sport_name = res_str.getStringArray(R.array.coordination_array);
-        }
-//        String name = sport_name[Integer.valueOf(sports)];
-//        toolbar = (Toolbar) findViewById(R.id.toolbar);
-//        this.setSupportActionBar(toolbar);
-//        getSupportActionBar().setDisplayShowTitleEnabled(true);
-        //  getSupportActionBar().setTitle("Ergebnis Sportart " +name);
+
+        customizeSupportActionBar(category, sports);
 
         ArrayList<String> AthletesList = populateSpinner();
 
@@ -110,6 +91,30 @@ public class NewResult extends AppCompatActivity {
         sports_text.setText("Ergebnis in " + unit);
 
 
+    }
+
+    public void customizeSupportActionBar(String sport_category, String sport_name) {
+        Resources res_end = getResources();
+        if(sport_category.equals("0")){
+            String[] endurance = res_end.getStringArray(R.array.endurance_array);
+            getSupportActionBar().setTitle("Ausdauer: " + endurance[Integer.valueOf(sport_name)]);
+            getSupportActionBar().setSubtitle("Ergebnis eintragen");
+        }
+        if(sport_category.equals("1")){
+            String[] strength = res_end.getStringArray(R.array.strength_array);
+            getSupportActionBar().setTitle("Kraft: " + strength[Integer.valueOf(sport_name)]);
+            getSupportActionBar().setSubtitle("Ergebnis eintragen");
+        }
+        if(sport_category.equals("2")){
+            String[] agility = res_end.getStringArray(R.array.agility_array);
+            getSupportActionBar().setTitle("Schnelligkeit: " + agility[Integer.valueOf(sport_name)]);
+            getSupportActionBar().setSubtitle("Ergebnis eintragen");
+        }
+        if(sport_category.equals("3")){
+            String[] coordination = res_end.getStringArray(R.array.coordination_array);
+            getSupportActionBar().setTitle("Koordination: " + coordination[Integer.valueOf(sport_name)]);
+            getSupportActionBar().setSubtitle("Ergebnis eintragen");
+        }
     }
 
     public ArrayList<String> populateSpinner() {

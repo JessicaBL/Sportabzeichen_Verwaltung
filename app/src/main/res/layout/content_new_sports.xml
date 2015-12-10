@@ -12,85 +12,42 @@
     tools:context="com.mobsys.fhdortmund.sportabzeichen_verwaltung.NewSports"
     tools:showIn="@layout/activity_new_sports">
 
-    <RadioButton
+
+    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Ausdauer"
-        android:id="@+id/radioButton_endurance"
-        android:checked="false"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Name"
+        android:id="@+id/textView6"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/editText_sportstation_name"
         android:layout_below="@+id/textView6"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:onClick="onRadioButtonEnduranceClicked"
-        />
+        android:layout_marginBottom="25dp"
+        android:layout_alignRight="@+id/lvExp_Sports"
+        android:layout_alignEnd="@+id/lvExp_Sports" />
+    />
 
-    <RadioButton
+    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Kraft"
-        android:id="@+id/radioButton_strength"
-        android:checked="false"
-        android:layout_alignTop="@+id/radioButton_endurance"
-        android:layout_centerHorizontal="true"
-        android:onClick="onRadioButtonStrengthClicked"/>
-
-    <RadioButton
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Schnelligkeit"
-        android:id="@+id/radioButton_agility"
-        android:checked="false"
-        android:layout_alignTop="@+id/radioButton_coordination"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Disziplinen"
+        android:id="@+id/textView7"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:onClick="onRadioButtonAgilityClicked"
-        android:layout_marginBottom="25dp" />
-    />
+        android:layout_below="@+id/editText_sportstation_name" />
 
-    <RadioButton
+    <ExpandableListView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Koordination"
-        android:id="@+id/radioButton_coordination"
-        android:layout_below="@+id/radioButton_strength"
-        android:layout_alignLeft="@+id/radioButton_strength"
-        android:layout_alignStart="@+id/radioButton_strength"
-        android:checked="false"
-        android:onClick="onRadioButtonCoordinationClicked"/>
-
-    />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="Kategorie"
-        android:id="@+id/textView6"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="Disziplin"
-        android:id="@+id/textView7"
-        android:layout_below="@+id/radioButton_agility"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
-
-    <ListView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/listView_sports"
+        android:id="@+id/lvExp_Sports"
         android:layout_centerHorizontal="true"
-        android:layout_below="@+id/textView7"
-        android:choiceMode="singleChoice"
-        android:listSelector="?attr/colorPrimary"
-        />
-
-    />
-
-
+        android:layout_below="@+id/textView7" />
 </RelativeLayout>

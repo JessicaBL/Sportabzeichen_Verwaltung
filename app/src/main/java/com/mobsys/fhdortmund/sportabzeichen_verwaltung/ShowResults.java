@@ -1,6 +1,8 @@
 package com.mobsys.fhdortmund.sportabzeichen_verwaltung;
 
+import android.app.ActionBar;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -10,6 +12,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.widget.ArrayAdapter;
 import android.widget.ListAdapter;
 import android.widget.ListView;
@@ -33,6 +36,7 @@ public class ShowResults extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        requestWindowFeature(Window.FEATURE_ACTION_BAR);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_show_results);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -54,15 +58,18 @@ public class ShowResults extends AppCompatActivity {
         Intent intent = getIntent();
         id_sports_results =intent.getStringExtra("id");
 
+
+        Cursor res_Sports = myDbSp.selectSingleData(id_sports_results);
+        res_Sports.moveToFirst();
+        String sport_category = res_Sports.getString(1);
+        String sport_name = res_Sports.getString(2);
+        String sport_unit = res_Sports.getString(3);
+
+        customizeSupportActionBar(sport_category, sport_name);
+
         Cursor res_Results = myDbRs.selectSingleDataSports(id_sports_results);
 
-
-        String sport_name = null;
-        String sport_parameter = null;
-
-
-
-            while (res_Results.moveToNext()) {
+        while (res_Results.moveToNext()) {
 
                 String id_athlete = res_Results.getString(1);
                 String id_sports = res_Results.getString(2);
@@ -81,11 +88,7 @@ public class ShowResults extends AppCompatActivity {
                     name = res_Athlete.getString(1);
                     surname = res_Athlete.getString(2);
                 }
-                Cursor res_Sports = myDbSp.selectSingleData(id_sports);
-                res_Sports.moveToFirst();
-                sport_name = res_Sports.getString(1);
-                sport_parameter = res_Sports.getString(2);
-                String sport_unit = res_Sports.getString(3);
+
 
                 Cursor res_Pruefer = myDbPr.getActive();
                 res_Pruefer.moveToFirst();
@@ -111,6 +114,31 @@ public class ShowResults extends AppCompatActivity {
         lv.setAdapter(adapter);
 
 
+    }
+
+    public  void customizeSupportActionBar(String sport_category, String sport_name) {
+        Resources res_end = getResources();
+        if(sport_category.equals("0")){
+            String[] endurance = res_end.getStringArray(R.array.endurance_array);
+            getSupportActionBar().setTitle("Ausdauer: " + endurance[Integer.valueOf(sport_name)]);
+            getSupportActionBar().setSubtitle("Ergebnisse");
+        }
+        if(sport_category.equals("1")){
+            String[] strength = res_end.getStringArray(R.array.strength_array);
+            getSupportActionBar().setTitle("Kraft: " + strength[Integer.valueOf(sport_name)]);
+            getSupportActionBar().setSubtitle("Ergebnisse");
+        }
+        if(sport_category.equals("2")){
+            String[] agility = res_end.getStringArray(R.array.agility_array);
+            getSupportActionBar().setTitle("Schnelligkeit: " + agility[Integer.valueOf(sport_name)]);
+            getSupportActionBar().setSubtitle("Ergebnisse");
+        }
+        if(sport_category.equals("3")){
+            String[] coordination = res_end.getStringArray(R.array.coordination_array);
+            getSupportActionBar().setTitle("Koordination: " + coordination[Integer.valueOf(sport_name)]);
+            getSupportActionBar().setSubtitle("Ergebnisse");
+
+        }
     }
 
     @Override

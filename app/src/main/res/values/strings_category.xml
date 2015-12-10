@@ -5,27 +5,26 @@
         <item>3.000 m Lauf</item>
         <item>10 km Lauf Lauf</item>
         <item>7,5 km Walking / Nordic Walking</item>
-        <item>800m Schwimmen</item>
+        <item>Schwimmen</item>
         <item>20 km Radfahren</item>
     </string-array>
 
     <string-array name="strength_array">
-        <item>Standweitsprung</item>
         <item>Medizinball (2 kg)</item>
-        <item>Steinstoßen (15 kg)</item>
+        <item>Steinstoßen</item>
+        <item>Standweitsprung</item>
     </string-array>
 
     <string-array name="agility_array">
-        <item>100 m Lauf</item>
+        <item>Laufen</item>
         <item>25 m Schwimmen</item>
-        <item>200m Radfahren (fl. Start)</item>
+        <item>200m Radfahren</item>
     </string-array>
 
     <string-array name="coordination_array">
-        <item>Geräteturnen (Sprung mit Drehung)</item>
         <item>Hochsprung</item>
         <item>Weitsprung</item>
-        <item>Schleuderball</item>
+        <item>Schleuderball (1 kg)</item>
     </string-array>
 
 

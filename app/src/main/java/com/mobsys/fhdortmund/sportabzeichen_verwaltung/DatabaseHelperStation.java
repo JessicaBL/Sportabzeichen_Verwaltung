@@ -6,26 +6,24 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-public class DatabaseHelperSports extends SQLiteOpenHelper{
+public class DatabaseHelperStation extends SQLiteOpenHelper{
 
-    public static final String DATABASE_NAME = "sports.db";
-    public static final String TABLE_NAME = "sports_table";
+    public static final String DATABASE_NAME = "station.db";
+    public static final String TABLE_NAME = "station_table";
     public static final String COL_1 = "ID";
-    public static final String COL_2= "CATEGORY";
-    public static final String COL_3= "SPORT";
-    public static final String COL_4= "UNIT";
-    public static final String COL_5= "POSITION_LAT";
-    public static final String COL_6= "POSITION_LNG";
+    public static final String COL_2= "NAME";
+    public static final String COL_3= "POSITION_LAT";
+    public static final String COL_4= "POSITION_LNG";
+    public static final String COL_5= "SPORTS";
 
 
-
-    public DatabaseHelperSports(Context context) {
+    public DatabaseHelperStation(Context context) {
         super(context, DATABASE_NAME, null, 1);
     }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL("create table " + TABLE_NAME + " (ID INTEGER PRIMARY KEY AUTOINCREMENT,CATEGORY TEXT,SPORT TEXT, UNIT TEXT, POSITION_LAT TEXT, POSITION_LNG TEXT)");
+        db.execSQL("create table " + TABLE_NAME + " (ID INTEGER PRIMARY KEY AUTOINCREMENT,NAME TEXT, POSITION_LAT TEXT, POSITION_LNG TEXT, SPORTS TEXT)");
     }
 
     @Override
@@ -34,14 +32,14 @@ public class DatabaseHelperSports extends SQLiteOpenHelper{
         onCreate(db);
     }
 
-    public boolean insertData(String category, String sport, String unit, String position_lat, String position_lng){
+    public boolean insertData(String name, String position_lat, String position_lng, String sports){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
-        contentValues.put(COL_2, category);
-        contentValues.put(COL_3, sport);
-        contentValues.put(COL_4, unit);
-        contentValues.put(COL_5, position_lat);
-        contentValues.put(COL_6, position_lng);
+        contentValues.put(COL_2, name);
+        contentValues.put(COL_3, position_lat);
+        contentValues.put(COL_4, position_lng);
+        contentValues.put(COL_5, sports);
+
         long  result = db.insert(TABLE_NAME, null, contentValues);
         if(result==-1)
             return false;
@@ -55,15 +53,14 @@ public class DatabaseHelperSports extends SQLiteOpenHelper{
         return res;
     }
 
-    public boolean updateData(String id, String category, String sport, String unit, String position_lat, String position_lng){
+    public boolean updateData(String id, String name, String position_lat, String position_lng, String sports){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put(COL_1, id);
-        contentValues.put(COL_2, category);
-        contentValues.put(COL_3, sport);
-        contentValues.put(COL_4, unit);
-        contentValues.put(COL_5, position_lat);
-        contentValues.put(COL_6, position_lng);
+        contentValues.put(COL_2, name);
+        contentValues.put(COL_3, position_lat);
+        contentValues.put(COL_4, position_lng);
+        contentValues.put(COL_5, sports);
         db.update(TABLE_NAME, contentValues, "ID = ?", new String[] { id });
         return true;
     }
@@ -76,12 +73,6 @@ public class DatabaseHelperSports extends SQLiteOpenHelper{
     public Cursor selectSingleData(String id){
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor res = db.rawQuery("select * from " + TABLE_NAME + " WHERE ID =" + id + "", null);
-        return res;
-    }
-
-    public Cursor selectLastData(){
-        SQLiteDatabase db = this.getWritableDatabase();
-        Cursor res = db.rawQuery("select max(id) from" + TABLE_NAME +"", null);
         return res;
     }
 

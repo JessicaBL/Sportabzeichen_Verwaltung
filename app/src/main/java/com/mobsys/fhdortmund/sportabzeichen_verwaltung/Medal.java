@@ -118,10 +118,10 @@ public class Medal extends AppCompatActivity {
                         if(groupPosition==0){
                             img_en.setImageResource(R.drawable.icon_white);
                             endurance = listDataHeader.get(groupPosition)
-                                        + " : "
-                                        + listDataChild.get(
-                                        listDataHeader.get(groupPosition)).get(
-                                        childPosition);
+                                    + " : "
+                                    + listDataChild.get(
+                                    listDataHeader.get(groupPosition)).get(
+                                    childPosition);
 
                             if(endurance.contains("Keine")) {
                                 Toast.makeText(Medal.this, "Ergebnis nicht ausreichend", Toast.LENGTH_LONG).show();
