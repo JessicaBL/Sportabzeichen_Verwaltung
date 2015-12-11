@@ -319,52 +319,49 @@ public class Maps extends AppCompatActivity implements OnMapReadyCallback, Googl
 
 
         final Spinner mSpinner = (Spinner) promptsView.findViewById(R.id.spinner_dialog);
-
-
-        alertDialogBuilder.setTitle("Disziplin auswählen")
-                .setItems(R.array.sports, new DialogInterface.OnClickListener(){
-                    public void onClick(DialogInterface dialog, int which){
-
-                        if (which ==0){
-                            //eintragen
-                            String item = (String)mSpinner.getSelectedItem();
-                            String[]splitResult=item.split(" ");
-                            Intent intent = new Intent(Maps.this, NewResult.class);
-                            intent.putExtra("id", splitResult[0]);
-                            startActivity(intent);
-                        }
-
-                        if(which==1){
-                            //alle anzeigen
-                            String item = (String)mSpinner.getSelectedItem();
-                            String[]splitResult=item.split(" ");
-                            Intent intent = new Intent(Maps.this, ShowResults.class);
-                            intent.putExtra("id", splitResult[0]);
-                            startActivity(intent);
-                        }
-
-                        else if (which ==2){
-                            //löschen
-
-                            //myDbSp.deleteData(result);
-
-                            //marker.remove();
-                        }
-
-                    }
-                });
-
-
+        mSpinner.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
 
         String title = marker.getTitle();
         String[] splitResult = title.split(" ");
-        String result = splitResult[0];
+        final String result = splitResult[0];
         ArrayList<String> SpinnerList = CreateSportsList(result);
 
         final ArrayAdapter<String> adp = new ArrayAdapter<String>(Maps.this,
                 android.R.layout.simple_spinner_dropdown_item, SpinnerList);
 
         mSpinner.setAdapter(adp);
+
+        alertDialogBuilder.setTitle("Disziplin auswählen")
+                .setItems(R.array.sports, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+
+                        if (which == 0) {
+                            //eintragen
+                            String item = (String) mSpinner.getSelectedItem();
+                            String[] splitResult = item.split(" ");
+                            Intent intent = new Intent(Maps.this, NewResult.class);
+                            intent.putExtra("id", splitResult[0]);
+                            startActivity(intent);
+                        }
+
+                        if (which == 1) {
+                            //alle anzeigen
+                            String item = (String) mSpinner.getSelectedItem();
+                            String[] splitResult = item.split(" ");
+                            Intent intent = new Intent(Maps.this, ShowResults.class);
+                            intent.putExtra("id", splitResult[0]);
+                            startActivity(intent);
+                        } else if (which == 2) {
+                            String item = (String) mSpinner.getSelectedItem();
+                            String[] splitResult = item.split(" ");
+                            Intent intent = new Intent(Maps.this, ChangeStation.class);
+                            intent.putExtra("id", result);
+                            startActivity(intent);
+                        }
+
+                    }
+                });
+
         final AlertDialog alertDialog = alertDialogBuilder.create();
         alertDialog.show();
 

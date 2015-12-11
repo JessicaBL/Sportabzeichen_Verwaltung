@@ -4,8 +4,11 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -18,7 +21,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class NewSports extends AppCompatActivity {
+public class ChangeStation extends AppCompatActivity {
 
     DatabaseHelperSports myDbSp;
     DatabaseHelperStation myDbSt;
@@ -27,45 +30,41 @@ public class NewSports extends AppCompatActivity {
     ExpandableListView expListView;
     List<String> listDataHeader;
     HashMap<String, List<String>> listDataChild;
-
     EditText sports_name;
 
-    String lat, lng;
+    String id_station;
 
     ArrayList<String> sports = new ArrayList<String>();
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_new_sports);
+        setContentView(R.layout.activity_change_station);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-
 
         myDbSp = new DatabaseHelperSports(this);
         myDbSt = new DatabaseHelperStation(this);
 
         Intent intent = getIntent();
-        lat = intent.getStringExtra("lat");
-        lng = intent.getStringExtra("lng");
+        id_station = intent.getStringExtra("id");
 
+        Cursor cursor_st=myDbSt.selectSingleData(id_station);
+        cursor_st.moveToFirst();
+        String name=cursor_st.getString(1);
+        getSupportActionBar().setTitle("Station "+name+" bearbeiten");
 
         sports_name = (EditText) findViewById(R.id.editText_sportstation_name);
-
 
         // get the listview
         expListView = (ExpandableListView) findViewById(R.id.lvExp_Sports_change);
         // preparing list data
         prepareListData();
 
-        listAdapter = new ExpandableListAdapter(NewSports.this, listDataHeader, listDataChild);
+        listAdapter = new ExpandableListAdapter(ChangeStation.this, listDataHeader, listDataChild);
 
-        // setting list adapter
         expListView.setAdapter(listAdapter);
-
 
         expListView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
             @Override
@@ -119,6 +118,7 @@ public class NewSports extends AppCompatActivity {
     }
 
     public void prepareListData() {
+
         listDataHeader = new ArrayList<String>();
         listDataChild = new HashMap<String, List<String>>();
 
@@ -179,70 +179,90 @@ public class NewSports extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_add_sports) {
-
             if(sports_name.getText().toString().equals("")){
-                Toast.makeText(NewSports.this, "Bitte Sportstation-Namen eingeben", Toast.LENGTH_LONG).show();
+                Toast.makeText(ChangeStation.this, "Bitte Sportstation-Namen eingeben", Toast.LENGTH_LONG).show();
             }
             else if(sports.isEmpty()){
-                Toast.makeText(NewSports.this, "Bitte mindestens eine Disziplin auswählen", Toast.LENGTH_LONG).show();
+                Toast.makeText(ChangeStation.this, "Bitte mindestens eine Disziplin auswählen", Toast.LENGTH_LONG).show();
             }
             else{
                 String category="";
                 String sport_id="";
                 String unit="";
-                StringBuilder strBuilder  = new StringBuilder();
-                for(String s: sports){
 
+                StringBuilder strBuilder  = new StringBuilder();
+                Cursor cursor_st=myDbSt.selectSingleData(id_station);
+                cursor_st.moveToFirst();
+                String lat=cursor_st.getString(2);
+                String lng=cursor_st.getString(3);
+                String station_sports_id=cursor_st.getString(4);
+                String station_sports[]=station_sports_id.split(",");
+                String single_sports_id;
+
+                for(String s: sports){
                     String[] splitResult=s.split("-");
                     category=splitResult[0];
                     sport_id=splitResult[1];
+                    int inserted=1;
+                    for (int x=0;x<station_sports.length;x++){
+                        single_sports_id=station_sports[x];
 
+                        Cursor cursor_sp=myDbSp.selectSingleData(single_sports_id);
+                        cursor_sp.moveToFirst();
+                        String category_old=cursor_sp.getString(1);
+                        String sport_old=cursor_sp.getString(2);
 
-
-                    if(category.equals("0")) {
-                        unit="min";
+                        if(category.equals(category_old)&&sport_old.equals(sport_id)){
+                            strBuilder.append(single_sports_id);
+                            strBuilder.append(",");
+                            inserted=0;
                         }
-                    if(category.equals("1")) {
-                        unit="m";
-                    }
-                    if(category.equals("2")) {
-                        unit="sek";
-                    }
-                    if(category.equals("3")) {
-                        unit="m";
+
                 }
-
-                 boolean isInserted_sp = myDbSp.insertData(category, sport_id, unit);
-
-                    if (isInserted_sp == true) {
-                        Cursor res = myDbSp.getAllData();
-                        res.moveToLast();
-                        strBuilder.append(res.getString(0));
-                        strBuilder.append(",");
+                    if(inserted==1) {
+                        if (category.equals("0")) {
+                            unit = "min";
+                        }
+                        if (category.equals("1")) {
+                            unit = "m";
+                        }
+                        if (category.equals("2")) {
+                            unit = "sek";
+                        }
+                        if (category.equals("3")) {
+                            unit = "m";
+                        }
+                        boolean isInserted_sp = myDbSp.insertData(category, sport_id, unit);
+                        if (isInserted_sp == true) {
+                            Cursor res = myDbSp.getAllData();
+                            res.moveToLast();
+                            strBuilder.append(res.getString(0));
+                            strBuilder.append(",");
+                        }
+                        if (isInserted_sp == false) {
+                        }
                     }
-                    if(isInserted_sp == false){
-
                     }
-                }
 
                 strBuilder.deleteCharAt(strBuilder.length()-1);
                 String station_sport = strBuilder.toString();
 
-                boolean isInserted_st = myDbSt.insertData(sports_name.getText().toString(), lat, lng, station_sport);
-                if (isInserted_st == true) {
-                    Toast.makeText(NewSports.this, "Sportstation angelegt", Toast.LENGTH_LONG).show();
-                    Intent intent = new Intent(NewSports.this, Maps.class);
+
+                boolean change_st=myDbSt.updateData(id_station, sports_name.getText().toString(), lat, lng, station_sport);
+
+                if (change_st == true) {
+                    Toast.makeText(ChangeStation.this, "Sportstation geändert", Toast.LENGTH_LONG).show();
+                    Intent intent = new Intent(ChangeStation.this, Maps.class);
                     startActivity(intent);
                 }
                 else
-                    Toast.makeText(NewSports.this, "Sportstation nicht angelegt", Toast.LENGTH_LONG).show();
-            }
+                    Toast.makeText(ChangeStation.this, "Sportstation nicht geändert", Toast.LENGTH_LONG).show();
             }
 
-
+        }
         return super.onOptionsItemSelected(item);
-    }
 
+    }
     @Override
     public boolean onKeyDown(int keycode, KeyEvent e) {
         switch(keycode) {
@@ -255,4 +275,5 @@ public class NewSports extends AppCompatActivity {
         return super.onKeyDown(keycode, e);
     }
 
-    }
+
+}

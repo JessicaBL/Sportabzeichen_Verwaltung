@@ -56,15 +56,16 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
 
-    <ImageButton
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/button_search"
-        android:src="@drawable/ic_search_black_24dp"
-        style="?android:attr/borderlessButtonStyle"
-        android:onClick="search"
-        android:layout_alignParentTop="true"
-        android:layout_toRightOf="@+id/textView4"
-        android:layout_toEndOf="@+id/textView4" />
+    <!--<ImageButton-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:id="@+id/button_search"-->
+        <!--android:src="@drawable/ic_search_black_24dp"-->
+        <!--style="?android:attr/borderlessButtonStyle"-->
+        <!--android:onClick="search"-->
+        <!--android:layout_alignParentTop="true"-->
+        <!--android:layout_toRightOf="@+id/textView4"-->
+        <!--android:layout_toEndOf="@+id/textView4" />-->
+
 
 </RelativeLayout>

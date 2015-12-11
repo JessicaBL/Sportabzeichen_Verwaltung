@@ -49,27 +49,9 @@ public class Login extends AppCompatActivity {
         }
 
 
-        populateListView();
-
     }
 
-    public void populateListView() {
-        Cursor res = myDbPr.getAllData();
 
-        ArrayList<String> AthletesList = new ArrayList<String>();
-
-        while(res.moveToNext()){
-            String id=res.getString(0);
-            String name=res.getString(1);
-            String password=res.getString(2);
-            AthletesList.add(id+ " Name: "+name+", Password: "+password);
-        }
-        ListAdapter adapter = new ArrayAdapter<>(Login.this, android.R.layout.simple_list_item_1,AthletesList);
-
-        final ListView lv = (ListView)findViewById(R.id.listView_pruefer);
-        lv.setAdapter(adapter);
-
-    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

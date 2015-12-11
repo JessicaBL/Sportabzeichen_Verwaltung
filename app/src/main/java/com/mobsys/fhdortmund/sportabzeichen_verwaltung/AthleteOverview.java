@@ -9,6 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.ContextMenu;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -16,8 +17,12 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.Spinner;
+import android.widget.TableLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.lang.reflect.Array;
@@ -106,10 +111,20 @@ public class AthleteOverview extends AppCompatActivity {
         lv.setAdapter(adapter);
         registerForContextMenu(lv);
 
+        LayoutInflater li = LayoutInflater.from(AthleteOverview.this);
+
+        final View promptsView = li.inflate(R.layout.search_layout, null);
+
         AlertDialog.Builder alert = new AlertDialog.Builder(AthleteOverview.this);
+
+        final EditText input = (EditText) promptsView.findViewById(R.id.search_edittext);
+
+
+
         alert.setTitle("Nach Sportler suchen");
-        final EditText input = new EditText(AthleteOverview.this);
-        alert.setView(input);
+        alert.setView(promptsView);
+
+
         alert.setPositiveButton("Suche", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -118,7 +133,7 @@ public class AthleteOverview extends AppCompatActivity {
                 ArrayList<String> AthletesList_Search = new ArrayList<String>();
 
                 for (String s : Original_List) {
-                    if (s.contains(result)==true) {
+                    if (s.contains(result) == true) {
                         AthletesList_Search.add(s);
                     }
                 }
@@ -142,6 +157,7 @@ public class AthleteOverview extends AppCompatActivity {
             }
         });
         alert.show();
+
     }
 
     @Override

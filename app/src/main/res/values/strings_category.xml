@@ -11,6 +11,7 @@
 
     <string-array name="strength_array">
         <item>Medizinball (2 kg)</item>
+        <item>Kugelstoßen</item>
         <item>Steinstoßen</item>
         <item>Standweitsprung</item>
     </string-array>

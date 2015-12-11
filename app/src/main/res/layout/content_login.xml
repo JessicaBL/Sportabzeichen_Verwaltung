@@ -21,7 +21,9 @@
         android:layout_below="@+id/textView13"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_marginBottom="25dp" />
+        android:layout_marginBottom="25dp"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
 
 
     <EditText
@@ -54,13 +56,6 @@
         android:layout_below="@+id/editText_pruefer_name"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
-
-    <ListView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/listView_pruefer"
-        android:layout_centerHorizontal="true"
-        android:layout_below="@+id/editText_pruefer_password" />
 
 
 </RelativeLayout>

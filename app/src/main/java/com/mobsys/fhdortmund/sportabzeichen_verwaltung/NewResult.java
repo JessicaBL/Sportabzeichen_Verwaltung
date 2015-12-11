@@ -11,6 +11,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -26,6 +27,7 @@ import android.widget.Toast;
 import java.lang.reflect.Array;
 import java.text.DateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 
 public class NewResult extends AppCompatActivity {
@@ -80,6 +82,8 @@ public class NewResult extends AppCompatActivity {
             unit = res.getString(3);
         }
 
+
+
         customizeSupportActionBar(category, sports);
 
         AthletesList = populateSpinner();
@@ -97,25 +101,112 @@ public class NewResult extends AppCompatActivity {
         TextView sports_text = (TextView) findViewById(R.id.textView_unit);
         sports_text.setText("Ergebnis in " + unit);
 
-        final ImageButton button = (ImageButton) findViewById(R.id.button_search);
-        button.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
+       // final ImageButton button = (ImageButton) findViewById(R.id.button_search);
+//        button.setOnClickListener(new View.OnClickListener() {
+//            public void onClick(View v) {
+//
+//                search(adapter_athletes, AthletesList);
+//
+//
+//            }
+//        });
 
-                search(adapter_athletes, AthletesList);
+        spinner_athlete.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                String selected = parent.getItemAtPosition(position).toString();
+                if(category.equals("0")&&(sports.equals("3"))) {
+                    adjustParameter(0, 3, selected);
+                }
+                if(category.equals("1")&&(sports.equals("1"))) {
+                    adjustParameter(1, 1, selected);
+                }
+                if(category.equals("1")&&(sports.equals("2"))) {
+                    adjustParameter(1, 2, selected);
+                }
+                if(category.equals("2")&&(sports.equals("0"))) {
+                    adjustParameter(0, 3, selected);
+                }
+            }
 
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
 
             }
         });
+
+
+
+
+    }
+
+    public void adjustParameter(int category, int sports, String selected) {
+        String selected_info[] = selected.split(" ");
+        String selected_id = selected_info[0];
+
+        Cursor res = myDb.selectSingleDataAthlete(selected_id);
+        res.moveToFirst();
+        String birthday = res.getString(3);
+        String sex = res.getString(4);
+
+        String birthday_split[] = birthday.split(" ");
+        int birthyear = Integer.parseInt(birthday_split[2]);
+
+
+        Calendar c = Calendar.getInstance();
+        int cur_year = c.get(Calendar.YEAR);
+        int dif=cur_year-birthyear;
+        String parameter="";
+        if(category==0 && sports==3) {
+            if (dif <= 49) parameter="800 m";
+            else if (dif <= 74)  parameter="600 m";
+            else if (dif >= 75)  parameter="200 m";
+        }
+        if(category==1 && sports==1){
+            if (dif <= 49 && sex.equals("weiblich")) parameter="4 kg";
+            else if (dif <= 74 &&sex.equals("weiblich")) parameter="3 kg";
+            else if (dif >= 75 && sex.equals("weiblich")) parameter="2 kg";
+
+            else if (dif <= 19 && sex.equals("männlich")) parameter="6 kg";
+            else if (dif <= 49 && sex.equals("männlich")) parameter="7,26 kg";
+            else if (dif <= 59 && sex.equals("männlich")) parameter="6 kg";
+            else if (dif <= 69 && sex.equals("männlich")) parameter="5 kg";
+            else if (dif <= 79 && sex.equals("männlich")) parameter="4 kg";
+            else if (dif >=80 && sex.equals("männlich")) parameter="3 kg";
+        }
+        if(category==1 && sports==2){
+            if (dif <= 19 && sex.equals("männlich")) parameter="10 kg";
+            else if (dif <= 49 && sex.equals("männlich")) parameter="15 kg";
+            else if (dif >= 50 && sex.equals("männlich")) parameter="10 kg";
+            else if (sex.equals("weiblich")) parameter="5 kg";
+        }
+        if(category==2 && sports==0){
+            if (dif <= 39) parameter="100 m";
+            else if (dif <= 74) parameter="50 m";
+            else if (dif >= 75) parameter="30 m";
+        }
+        getSupportActionBar().setSubtitle("Ergebnis eintragen ("+parameter+")");
+
     }
 
     public void search(ArrayAdapter adapter_athletes, final ArrayList AthletesList) {
 
         spinner_athlete.setAdapter(adapter_athletes);
 
+        LayoutInflater li = LayoutInflater.from(NewResult.this);
+
+        final View promptsView = li.inflate(R.layout.search_layout, null);
+
         AlertDialog.Builder alert = new AlertDialog.Builder(NewResult.this);
+
+        final EditText input = (EditText) promptsView.findViewById(R.id.search_edittext);
+
+
+
         alert.setTitle("Nach Sportler suchen");
-        final EditText input = new EditText(NewResult.this);
-        alert.setView(input);
+        alert.setView(promptsView);
+
+
         alert.setPositiveButton("Suche", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -158,22 +249,18 @@ public class NewResult extends AppCompatActivity {
         if(sport_category.equals("0")){
             String[] endurance = res_end.getStringArray(R.array.endurance_array);
             getSupportActionBar().setTitle("Ausdauer: " + endurance[Integer.valueOf(sport_name)]);
-            getSupportActionBar().setSubtitle("Ergebnis eintragen");
         }
         if(sport_category.equals("1")){
             String[] strength = res_end.getStringArray(R.array.strength_array);
             getSupportActionBar().setTitle("Kraft: " + strength[Integer.valueOf(sport_name)]);
-            getSupportActionBar().setSubtitle("Ergebnis eintragen");
         }
         if(sport_category.equals("2")){
             String[] agility = res_end.getStringArray(R.array.agility_array);
             getSupportActionBar().setTitle("Schnelligkeit: " + agility[Integer.valueOf(sport_name)]);
-            getSupportActionBar().setSubtitle("Ergebnis eintragen");
         }
         if(sport_category.equals("3")){
             String[] coordination = res_end.getStringArray(R.array.coordination_array);
             getSupportActionBar().setTitle("Koordination: " + coordination[Integer.valueOf(sport_name)]);
-            getSupportActionBar().setSubtitle("Ergebnis eintragen");
         }
     }
 
