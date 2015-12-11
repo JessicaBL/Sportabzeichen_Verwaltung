@@ -7,6 +7,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -118,7 +119,7 @@ public class Medal extends AppCompatActivity {
                         if(groupPosition==0){
                             img_en.setImageResource(R.drawable.icon_white);
                             endurance = listDataHeader.get(groupPosition)
-                                    + " : "
+                                    + " - "
                                     + listDataChild.get(
                                     listDataHeader.get(groupPosition)).get(
                                     childPosition);
@@ -137,7 +138,7 @@ public class Medal extends AppCompatActivity {
                         if(groupPosition==1){
                             img_str.setImageResource(R.drawable.icon_white);
                             strength = listDataHeader.get(groupPosition)
-                                    + " : "
+                                    + " - "
                                     + listDataChild.get(
                                     listDataHeader.get(groupPosition)).get(
                                     childPosition);
@@ -155,7 +156,7 @@ public class Medal extends AppCompatActivity {
                         if(groupPosition==2){
                             img_ag.setImageResource(R.drawable.icon_white);
                             agility = listDataHeader.get(groupPosition)
-                                    + " : "
+                                    + " - "
                                     + listDataChild.get(
                                     listDataHeader.get(groupPosition)).get(
                                     childPosition);
@@ -173,7 +174,7 @@ public class Medal extends AppCompatActivity {
                         if(groupPosition==3){
                             img_co.setImageResource(R.drawable.icon_white);
                             coordination = listDataHeader.get(groupPosition)
-                                    + " : "
+                                    + " - "
                                     + listDataChild.get(
                                     listDataHeader.get(groupPosition)).get(
                                     childPosition);
@@ -270,7 +271,9 @@ public class Medal extends AppCompatActivity {
             if (id_sport_category.equals("3")) {
                 mTestArray = getResources().getStringArray(R.array.coordination_array);
             }
+
             String sport_name_string = mTestArray[Integer.parseInt(sports)];
+            //String sport_name_string="Test";
 
             Cursor res_Pruefer = myDbPr.getActive();
             res_Pruefer.moveToFirst();
@@ -310,13 +313,13 @@ public class Medal extends AppCompatActivity {
         String[] mTestArray = new String[0];
 
         if (sports_category.equals("0")) {
-            mTestArray = getResources().getStringArray(R.array.m_1990_0_1);
+            mTestArray = getResources().getStringArray(R.array.m_1990_0_0);
         }
         if (sports_category.equals("1")) {
-            mTestArray = getResources().getStringArray(R.array.m_1990_1_0);
+            mTestArray = getResources().getStringArray(R.array.m_1990_1_3);
         }
         if (sports_category.equals("2")) {
-            mTestArray = getResources().getStringArray(R.array.m_1990_2_1);
+            mTestArray = getResources().getStringArray(R.array.m_1990_2_0);
         }
         if (sports_category.equals("3")) {
             mTestArray = getResources().getStringArray(R.array.m_1990_3_1);
@@ -328,16 +331,16 @@ public class Medal extends AppCompatActivity {
         //Ergebnisse müssen kleiner sein als Grenze (-->Zeit)
         if(sports_unit.equals("min")||sports_unit.equals("sek")||sports_unit.equals("h")){
             if(result_double>bronze) medal = "Keine Medaille";
-            if((result_double<bronze)&&(result_double>silver)) medal="Bronze";
-            if((result_double<silver)&&(result_double>gold)) medal="Silber";
-            if((result_double<gold)) medal="Gold";
+            if((result_double<=bronze)&&(result_double>silver)) medal="Bronze";
+            if((result_double<=silver)&&(result_double>gold)) medal="Silber";
+            if((result_double<=gold)) medal="Gold";
         }
         //Ergebnisse müssen größer sein als Grenze (-->Zeit)
         if(sports_unit.equals("m")){
             if(result_double<bronze) medal = "Keine Medaille";
-            if((result_double>bronze)&&(result_double<silver)) medal="Bronze";
-            if((result_double>silver)&&(result_double<gold)) medal="Silber";
-            if((result_double>gold)) medal="Gold";
+            if((result_double>=bronze)&&(result_double<silver)) medal="Bronze";
+            if((result_double>=silver)&&(result_double<gold)) medal="Silber";
+            if((result_double>=gold)) medal="Gold";
         }
 
         return medal;

@@ -20,12 +20,14 @@
         <item>Laufen</item>
         <item>25 m Schwimmen</item>
         <item>200m Radfahren</item>
+        <item>DUMMY</item>
     </string-array>
 
     <string-array name="coordination_array">
         <item>Hochsprung</item>
         <item>Weitsprung</item>
         <item>Schleuderball (1 kg)</item>
+        <item>DUMMY</item>
     </string-array>
 
 

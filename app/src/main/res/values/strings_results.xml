@@ -1,22 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string-array name="m_1990_0_1">
+    <string-array name="m_1990_0_0">
         <item>17</item>
         <item>15</item>
         <item>13</item>
     </string-array>
 
-    <string-array name="m_1990_2_1">
-        <item>14.8</item>
-        <item>13.5</item>
-        <item>12.3</item>
-    </string-array>
-
-    <string-array name="m_1990_1_0">
+    <string-array name="m_1990_1_3">
         <item>2.05</item>
         <item>2.25</item>
         <item>2.45</item>
+    </string-array>
+
+    <string-array name="m_1990_2_0">
+        <item>14.8</item>
+        <item>13.5</item>
+        <item>12.3</item>
     </string-array>
 
     <string-array name="m_1990_3_1">
