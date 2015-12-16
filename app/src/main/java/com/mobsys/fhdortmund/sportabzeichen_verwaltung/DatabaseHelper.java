@@ -1,7 +1,3 @@
-/**
- * Created by Hendrik on 03.11.2015.
- */
-
 package com.mobsys.fhdortmund.sportabzeichen_verwaltung;
 
 import android.content.ContentValues;

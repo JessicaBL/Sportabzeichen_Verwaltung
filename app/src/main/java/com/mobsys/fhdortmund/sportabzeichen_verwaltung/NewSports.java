@@ -1,8 +1,10 @@
 package com.mobsys.fhdortmund.sportabzeichen_verwaltung;
 
+import android.annotation.TargetApi;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -17,6 +19,8 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
+import static com.mobsys.fhdortmund.sportabzeichen_verwaltung.R.color.colorPrimary;
 
 public class NewSports extends AppCompatActivity {
 
@@ -48,6 +52,27 @@ public class NewSports extends AppCompatActivity {
         myDbSp = new DatabaseHelperSports(this);
         myDbSt = new DatabaseHelperStation(this);
 
+        //---------------------------------------------------
+        //LÖSCHEN, WENN ONLINE-DISZIPLIN-VERWALTUNG INTEGRIERT
+//        myDbSp.insertData("Ausdauer", "3.000 m Lauf", "Min.");
+//        myDbSp.insertData("Ausdauer", "10 km Lauf", "Min.");
+//        myDbSp.insertData("Ausdauer", "7,5 km Walking/Nordic Walking", "Min.");
+//        myDbSp.insertData("Ausdauer", "Schwimmen", "Min.");
+//
+//        myDbSp.insertData("Kraft", "Medizinball (2 kg)", "m");
+//        myDbSp.insertData("Kraft", "Kugelstoßen", "m");
+//        myDbSp.insertData("Kraft", "Standweitsprung", "m");
+//
+//        myDbSp.insertData("Schnelligkeit", "Laufen", "Sek.");
+//        myDbSp.insertData("Schnelligkeit", "25 m Schwimmen", "Sek.");
+//        myDbSp.insertData("Schnelligkeit", "200 m Radfahren (fl. Start)", "m");
+//
+//        myDbSp.insertData("Koordination", "Hochsprung", "m");
+//        myDbSp.insertData("Koordination", "Weitsprung", "m");
+//        myDbSp.insertData("Koordination", "Schleuderball (1 kg)", "m");
+        //----------------------------------------------------
+        //----------------------------------------------------
+
         Intent intent = getIntent();
         lat = intent.getStringExtra("lat");
         lng = intent.getStringExtra("lng");
@@ -68,48 +93,26 @@ public class NewSports extends AppCompatActivity {
 
 
         expListView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
+            @TargetApi(Build.VERSION_CODES.M)
             @Override
             public boolean onChildClick(ExpandableListView parent, View v,
                                         int groupPosition, int childPosition, long id) {
-                int gP = groupPosition;
-                int cP = childPosition;
-                String selected_sports = Integer.toString(gP) + "-" + Integer.toString(cP);
 
+               String category_name = parent.getExpandableListAdapter().getGroup(groupPosition).toString();
+               String sports_name = parent.getExpandableListAdapter().getChild(groupPosition, childPosition).toString();
+               Cursor res = myDbSp.selectIDFromCategorySports(category_name, sports_name);
+               res.moveToFirst();
+               String selected_sports = res.getString(0);
 
                 if (!sports.contains(selected_sports)) {
                     sports.add(selected_sports);
+                    v.setBackgroundColor(Color.RED);
                     v.setActivated(true);
-                    v.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
                 } else if (sports.contains(selected_sports)) {
                     sports.remove(selected_sports);
-                    v.setActivated(false);
                     v.setBackgroundColor(Color.TRANSPARENT);
+                    v.setActivated(false);
                 }
-
-
-//                if(buffer[index]==0){
-//                    v.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
-//                    buffer[index]=1;
-//                }
-//                else if(buffer[index]==1) {
-//                    v.setBackgroundColor(Color.TRANSPARENT);
-//                    buffer[index]=0;
-//                }
-
-                if (groupPosition == 0) {
-
-
-                } else if (groupPosition == 1) {
-
-
-                } else if (groupPosition == 2) {
-
-
-                } else if (groupPosition == 3) {
-
-
-                }
-
 
                 return false;
 
@@ -130,10 +133,10 @@ public class NewSports extends AppCompatActivity {
 
 
         //Get Data
-        ArrayList<String> endurance_List = getData("0");
-        ArrayList<String> strength_List = getData("1");
-        ArrayList<String> agility_List = getData("2");
-        ArrayList<String> coordination_List = getData("3");
+        ArrayList<String> endurance_List = getData("Ausdauer");
+        ArrayList<String> strength_List = getData("Kraft");
+        ArrayList<String> agility_List = getData("Schnelligkeit");
+        ArrayList<String> coordination_List = getData("Koordination");
 
         listDataChild.put(listDataHeader.get(0), endurance_List);
         listDataChild.put(listDataHeader.get(1), strength_List);
@@ -142,23 +145,14 @@ public class NewSports extends AppCompatActivity {
 
     }
 
-    public ArrayList<String> getData(String id_sport_category) {
+    public ArrayList<String> getData(String sport_category) {
         ArrayList<String> SportList = new ArrayList<String>();
 
-        String[] mTestArray = new String[0];
-        if (id_sport_category.equals("0")) {
-            mTestArray = getResources().getStringArray(R.array.endurance_array);
+        Cursor res = myDbSp.selectSingleCategory(sport_category);
+
+        while(res.moveToNext()){
+            SportList.add(res.getString(2));
         }
-        if (id_sport_category.equals("1")) {
-            mTestArray = getResources().getStringArray(R.array.strength_array);
-        }
-        if (id_sport_category.equals("2")) {
-            mTestArray = getResources().getStringArray(R.array.agility_array);
-        }
-        if (id_sport_category.equals("3")) {
-            mTestArray = getResources().getStringArray(R.array.coordination_array);
-        }
-        for (int i=0; i<mTestArray.length; i++) SportList.add(mTestArray[i]);
 
         return SportList;
     }
@@ -187,43 +181,12 @@ public class NewSports extends AppCompatActivity {
                 Toast.makeText(NewSports.this, "Bitte mindestens eine Disziplin auswählen", Toast.LENGTH_LONG).show();
             }
             else{
-                String category="";
-                String sport_id="";
-                String unit="";
                 StringBuilder strBuilder  = new StringBuilder();
+
                 for(String s: sports){
-
-                    String[] splitResult=s.split("-");
-                    category=splitResult[0];
-                    sport_id=splitResult[1];
-
-
-
-                    if(category.equals("0")) {
-                        unit="min";
-                        }
-                    if(category.equals("1")) {
-                        unit="m";
-                    }
-                    if(category.equals("2")) {
-                        unit="sek";
-                    }
-                    if(category.equals("3")) {
-                        unit="m";
-                }
-
-                 boolean isInserted_sp = myDbSp.insertData(category, sport_id, unit);
-
-                    if (isInserted_sp == true) {
-                        Cursor res = myDbSp.getAllData();
-                        res.moveToLast();
-                        strBuilder.append(res.getString(0));
+                        strBuilder.append(s);
                         strBuilder.append(",");
                     }
-                    if(isInserted_sp == false){
-
-                    }
-                }
 
                 strBuilder.deleteCharAt(strBuilder.length()-1);
                 String station_sport = strBuilder.toString();

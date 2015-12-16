@@ -3,13 +3,10 @@ package com.mobsys.fhdortmund.sportabzeichen_verwaltung;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListAdapter;
 import android.widget.ListView;
@@ -79,29 +76,12 @@ public class ResultsAthlete extends AppCompatActivity {
                 res_Pruefer.moveToFirst();
                 String cur_pruefer_id = res_Pruefer.getString(0);
 
-                String[] mTestArray = new String[0];
 
-                if (category.equals("0")) {
-                    mTestArray = getResources().getStringArray(R.array.endurance_array);
-                }
-                if (category.equals("1")) {
-                    mTestArray = getResources().getStringArray(R.array.strength_array);
-                }
-                if (category.equals("2")) {
-                    mTestArray = getResources().getStringArray(R.array.agility_array);
-                }
-                if (category.equals("3")) {
-                    mTestArray = getResources().getStringArray(R.array.coordination_array);
-                }
-
-
-                String sport_name_string = mTestArray[Integer.parseInt(sports)];
 
                 if (cur_pruefer_id.equals(id_pruefer)) {
-                    Result_List.add(sport_name_string + ": " + result + " " + unit + ", Datum: " + result_nr);
+                    Result_List.add(sports + ": " + result + " " + unit + ", Datum: " + result_nr);
                 } else {
-                    Result_List.add(sport_name_string + " : Ergebnis für Prüfer unsichtbar, Datum: " + result_nr);
-
+                    Result_List.add(sports + " : Ergebnis für Prüfer unsichtbar, Datum: " + result_nr);
                 }
             }
         }

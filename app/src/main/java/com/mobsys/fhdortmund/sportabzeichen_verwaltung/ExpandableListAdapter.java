@@ -2,7 +2,6 @@ package com.mobsys.fhdortmund.sportabzeichen_verwaltung;
 
 import java.util.HashMap;
 import java.util.List;
-
 import android.content.Context;
 import android.graphics.Typeface;
 import android.view.LayoutInflater;

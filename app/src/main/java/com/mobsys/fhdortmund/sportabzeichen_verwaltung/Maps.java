@@ -6,26 +6,20 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.content.res.Resources;
 import android.database.Cursor;
 import android.location.Location;
 import android.location.LocationManager;
-import android.provider.SyncStateContract;
-import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
-import android.widget.ListAdapter;
 import android.widget.Spinner;
-import android.widget.SpinnerAdapter;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdate;
@@ -291,16 +285,6 @@ public class Maps extends AppCompatActivity implements OnMapReadyCallback, Googl
                            .title(id+" - " + name));
                             markers.add(marker);
 
-//            if(category.equals("0")) {
-//                Resources res_end = getResources();
-//                String[] endurance = res_end.getStringArray(R.array.endurance_array);
-//                Marker marker = mMap.addMarker(new MarkerOptions()
-//                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_VIOLET))
-//                        .position(latlng)
-//                        .title(id + " - Ausdauer: " + endurance[Integer.parseInt(sport)]));
-//                markers.add(marker);
-//            }
-
         }
 
     }
@@ -338,24 +322,22 @@ public class Maps extends AppCompatActivity implements OnMapReadyCallback, Googl
                         if (which == 0) {
                             //eintragen
                             String item = (String) mSpinner.getSelectedItem();
-                            String[] splitResult = item.split(" ");
+                            String[] splitResult_sp = item.split(": ");
                             Intent intent = new Intent(Maps.this, NewResult.class);
-                            intent.putExtra("id", splitResult[0]);
+                            intent.putExtra("sports", splitResult_sp[1]);
                             startActivity(intent);
                         }
-
                         if (which == 1) {
                             //alle anzeigen
                             String item = (String) mSpinner.getSelectedItem();
-                            String[] splitResult = item.split(" ");
+                            String[] splitResult_sp = item.split(": ");
                             Intent intent = new Intent(Maps.this, ShowResults.class);
-                            intent.putExtra("id", splitResult[0]);
+                            intent.putExtra("sports", splitResult_sp[1]);
                             startActivity(intent);
-                        } else if (which == 2) {
-                            String item = (String) mSpinner.getSelectedItem();
-                            String[] splitResult = item.split(" ");
+                        }
+                        if (which == 2) {
                             Intent intent = new Intent(Maps.this, ChangeStation.class);
-                            intent.putExtra("id", result);
+                            intent.putExtra("id_station", result);
                             startActivity(intent);
                         }
 
@@ -378,49 +360,14 @@ public class Maps extends AppCompatActivity implements OnMapReadyCallback, Googl
         ArrayList<String> SpinnerList = new ArrayList<String>();
 
         for (String s:split_all_sports){
+            Cursor res_sports = myDbSp.selectSingleData(s);
+            res_sports.moveToFirst();
 
-            Cursor res_sp = myDbSp.selectSingleData(s);
-            res_sp.moveToFirst();
-            String id=res_sp.getString(0);
-            String category= res_sp.getString(1);
-            String sports= res_sp.getString(2);
-            String category_name="";
-            String sports_name="";
+            String category_name= res_sports.getString(1);
+            String sports_name= res_sports.getString(2);
 
-            if(category.equals("0")){
-                Resources res_end = getResources();
-                String[] endurance = res_end.getStringArray(R.array.endurance_array);
 
-                category_name="Ausdauer";
-                sports_name=endurance[Integer.parseInt(sports)];
-            }
-
-            if(category.equals("1")){
-                Resources res_str = getResources();
-                String[] strength = res_str.getStringArray(R.array.strength_array);
-
-                category_name="Kraft";
-                sports_name=strength[Integer.parseInt(sports)];
-            }
-
-            if(category.equals("2")){
-                Resources res_agil = getResources();
-                String[] agility = res_agil.getStringArray(R.array.agility_array);
-
-                category_name="Schnelligkeit";
-                sports_name=agility[Integer.parseInt(sports)];
-
-            }
-
-            if(category.equals("3")){
-                Resources res_coord = getResources();
-                String[] coordination = res_coord.getStringArray(R.array.coordination_array);
-
-                category_name="Koordination";
-                sports_name=coordination[Integer.parseInt(sports)];
-            }
-
-            SpinnerList.add(id+" - "+category_name+": "+sports_name);
+            SpinnerList.add(category_name+": "+sports_name);
         }
         return SpinnerList;
     }

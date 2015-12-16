@@ -1,14 +1,11 @@
 package com.mobsys.fhdortmund.sportabzeichen_verwaltung;
 
-import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
@@ -17,14 +14,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import java.lang.reflect.Array;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -37,7 +30,6 @@ public class NewResult extends AppCompatActivity {
     DatabaseHelperResults myDbRs;
     DatabaseHelperPruefer myDbPr;
 
-    String id;
     String id_athlete;
     Spinner spinner_athlete;
     EditText result;
@@ -72,15 +64,14 @@ public class NewResult extends AppCompatActivity {
 
 
         Intent intent = getIntent();
-        id = intent.getStringExtra("id");
-        Cursor res = myDbSp.selectSingleData(id);
+        sports = intent.getStringExtra("sports");
+        Cursor res = myDbSp.selectSingleSports(sports);
 
-        while (res.moveToNext()) {
+        res.moveToFirst();
             id_sports = res.getString(0);
             category = res.getString(1);
-            sports = res.getString(2);
             unit = res.getString(3);
-        }
+
 
 
 
@@ -101,31 +92,22 @@ public class NewResult extends AppCompatActivity {
         TextView sports_text = (TextView) findViewById(R.id.textView_unit);
         sports_text.setText("Ergebnis in " + unit);
 
-       // final ImageButton button = (ImageButton) findViewById(R.id.button_search);
-//        button.setOnClickListener(new View.OnClickListener() {
-//            public void onClick(View v) {
-//
-//                search(adapter_athletes, AthletesList);
-//
-//
-//            }
-//        });
 
         spinner_athlete.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 String selected = parent.getItemAtPosition(position).toString();
-                if(category.equals("0")&&(sports.equals("3"))) {
-                    adjustParameter(0, 3, selected);
+                if(category.equals("Ausdauer")&&(sports.equals("Schwimmen"))) {
+                    adjustParameter("Ausdauer", "Schwimmen", selected);
                 }
-                if(category.equals("1")&&(sports.equals("1"))) {
-                    adjustParameter(1, 1, selected);
+                if(category.equals("Kraft")&&(sports.equals("Kugelstoßen"))) {
+                    adjustParameter("Kraft", "Kugelstoßen", selected);
                 }
-                if(category.equals("1")&&(sports.equals("2"))) {
-                    adjustParameter(1, 2, selected);
+                if(category.equals("Kraft")&&(sports.equals("Steinstoßen"))) {
+                    adjustParameter("Kraft", "Steinstoßen", selected);
                 }
-                if(category.equals("2")&&(sports.equals("0"))) {
-                    adjustParameter(0, 3, selected);
+                if(category.equals("Schnelligkeit")&&(sports.equals("Laufen"))) {
+                    adjustParameter("Schnelligkeit", "Laufen", selected);
                 }
             }
 
@@ -140,7 +122,7 @@ public class NewResult extends AppCompatActivity {
 
     }
 
-    public void adjustParameter(int category, int sports, String selected) {
+    public void adjustParameter(String category, String sports, String selected) {
         String selected_info[] = selected.split(" ");
         String selected_id = selected_info[0];
 
@@ -157,12 +139,12 @@ public class NewResult extends AppCompatActivity {
         int cur_year = c.get(Calendar.YEAR);
         int dif=cur_year-birthyear;
         String parameter="";
-        if(category==0 && sports==3) {
+        if(category.equals("Ausdauer") && sports.equals("Schwimmen")) {
             if (dif <= 49) parameter="800 m";
             else if (dif <= 74)  parameter="600 m";
             else if (dif >= 75)  parameter="200 m";
         }
-        if(category==1 && sports==1){
+        if(category.equals("Kraft") && sports.equals("Kugelstoßen")){
             if (dif <= 49 && sex.equals("weiblich")) parameter="4 kg";
             else if (dif <= 74 &&sex.equals("weiblich")) parameter="3 kg";
             else if (dif >= 75 && sex.equals("weiblich")) parameter="2 kg";
@@ -174,13 +156,13 @@ public class NewResult extends AppCompatActivity {
             else if (dif <= 79 && sex.equals("männlich")) parameter="4 kg";
             else if (dif >=80 && sex.equals("männlich")) parameter="3 kg";
         }
-        if(category==1 && sports==2){
+        if(category.equals("Kraft") && sports.equals("Steinstoßen")){
             if (dif <= 19 && sex.equals("männlich")) parameter="10 kg";
             else if (dif <= 49 && sex.equals("männlich")) parameter="15 kg";
             else if (dif >= 50 && sex.equals("männlich")) parameter="10 kg";
             else if (sex.equals("weiblich")) parameter="5 kg";
         }
-        if(category==2 && sports==0){
+        if(category.equals("Schnelligkeit") && sports.equals("Laufen")){
             if (dif <= 39) parameter="100 m";
             else if (dif <= 74) parameter="50 m";
             else if (dif >= 75) parameter="30 m";
@@ -246,22 +228,8 @@ public class NewResult extends AppCompatActivity {
 
     public void customizeSupportActionBar(String sport_category, String sport_name) {
         Resources res_end = getResources();
-        if(sport_category.equals("0")){
-            String[] endurance = res_end.getStringArray(R.array.endurance_array);
-            getSupportActionBar().setTitle("Ausdauer: " + endurance[Integer.valueOf(sport_name)]);
-        }
-        if(sport_category.equals("1")){
-            String[] strength = res_end.getStringArray(R.array.strength_array);
-            getSupportActionBar().setTitle("Kraft: " + strength[Integer.valueOf(sport_name)]);
-        }
-        if(sport_category.equals("2")){
-            String[] agility = res_end.getStringArray(R.array.agility_array);
-            getSupportActionBar().setTitle("Schnelligkeit: " + agility[Integer.valueOf(sport_name)]);
-        }
-        if(sport_category.equals("3")){
-            String[] coordination = res_end.getStringArray(R.array.coordination_array);
-            getSupportActionBar().setTitle("Koordination: " + coordination[Integer.valueOf(sport_name)]);
-        }
+            getSupportActionBar().setTitle(sport_category + ": " + sport_name);
+
     }
 
     public ArrayList<String> populateSpinner() {
@@ -306,7 +274,10 @@ public class NewResult extends AppCompatActivity {
                 Toast.makeText(NewResult.this, "Kein Sportler vorhanden", Toast.LENGTH_LONG).show();
             }
             else if (result.getText().toString().equals("")) {
-                  Toast.makeText(NewResult.this, "Bitte Ergebnis eingeben", Toast.LENGTH_LONG).show();
+                Toast.makeText(NewResult.this, "Bitte Ergebnis eingeben", Toast.LENGTH_LONG).show();
+
+            }else if(checkTries(id_athlete, id_sports.toString())==false){
+                Toast.makeText(NewResult.this, "Anzahl der Versuche für diese Disziplin überschritten", Toast.LENGTH_LONG).show();
             } else {
                     String currentDateString = DateFormat.getDateInstance().format(new Date());
 
@@ -337,4 +308,23 @@ public class NewResult extends AppCompatActivity {
         }
             return super.onOptionsItemSelected(item);
         }
+
+    public  boolean checkTries(String id_athlete, String id_sports) {
+        Cursor res_results= myDbRs.selectSingleDataAthlete(id_athlete);
+        Calendar c = Calendar.getInstance();
+        String cur_year =new Integer(c.get(Calendar.YEAR)).toString();
+
+        int counter=0;
+        while(res_results.moveToNext()){
+            String sports_id_result= res_results.getString(2);
+            String sports_date= res_results.getString(4);
+            String sports_dateSplit[]=sports_date.split("\\.");
+            if(cur_year.equals(sports_dateSplit[2]) && sports_id_result.equals(id_sports)){
+                counter++;
+            }
+        }
+        if (counter<=2) return true;
+        else return false;
+
     }
+}

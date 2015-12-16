@@ -76,9 +76,9 @@ public class DatabaseHelperStation extends SQLiteOpenHelper{
         return res;
     }
 
-    public Cursor selectSingleCategory(String id){
+    public Cursor selectSingleCategory(String category){
         SQLiteDatabase db = this.getWritableDatabase();
-        Cursor res = db.rawQuery("select * from " + TABLE_NAME+ " WHERE CATEGORY ="+id+"", null);
+        Cursor res = db.rawQuery("select * from " + TABLE_NAME+ " WHERE CATEGORY ="+category+"", null);
         return res;
     }
 

@@ -18,6 +18,7 @@ public class MainActivity extends AppCompatActivity {
 
     DatabaseHelper myDb;
     DatabaseHelperPruefer myDbPr;
+    DatabaseHelperSports myDbSp;
 
     String id_athlete;
 
@@ -31,6 +32,7 @@ public class MainActivity extends AppCompatActivity {
 
         myDb = new DatabaseHelper(this);
         myDbPr = new DatabaseHelperPruefer(this);
+        myDbSp = new DatabaseHelperSports(this);
         setPrueferName();
 
     }

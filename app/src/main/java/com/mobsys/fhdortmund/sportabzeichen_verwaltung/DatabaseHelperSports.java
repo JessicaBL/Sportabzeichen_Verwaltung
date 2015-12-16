@@ -73,15 +73,21 @@ public class DatabaseHelperSports extends SQLiteOpenHelper{
         return res;
     }
 
-    public Cursor selectLastData(){
+    public Cursor selectSingleCategory(String category){
         SQLiteDatabase db = this.getWritableDatabase();
-        Cursor res = db.rawQuery("select max(id) from" + TABLE_NAME +"", null);
+        Cursor res = db.rawQuery("select * from " + TABLE_NAME + " WHERE CATEGORY ='"+category+"'", null);
         return res;
     }
 
-    public Cursor selectSingleCategory(String id){
+    public Cursor selectSingleSports(String sports){
         SQLiteDatabase db = this.getWritableDatabase();
-        Cursor res = db.rawQuery("select * from " + TABLE_NAME+ " WHERE CATEGORY ="+id+"", null);
+        Cursor res = db.rawQuery("select * from " + TABLE_NAME + " WHERE SPORT ='"+sports+"'", null);
+        return res;
+    }
+
+    public Cursor selectIDFromCategorySports(String category, String sports){
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor res = db.rawQuery("select * from " + TABLE_NAME + " WHERE CATEGORY ='"+category+"' AND SPORT ='"+sports+"'", null);
         return res;
     }
 

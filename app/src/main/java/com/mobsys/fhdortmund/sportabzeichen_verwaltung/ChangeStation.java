@@ -2,13 +2,9 @@ package com.mobsys.fhdortmund.sportabzeichen_verwaltung;
 
 import android.content.Intent;
 import android.database.Cursor;
-import android.graphics.Color;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -16,7 +12,6 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ExpandableListView;
 import android.widget.Toast;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -33,7 +28,6 @@ public class ChangeStation extends AppCompatActivity {
     EditText sports_name;
 
     String id_station;
-
     ArrayList<String> sports = new ArrayList<String>();
 
     @Override
@@ -48,7 +42,7 @@ public class ChangeStation extends AppCompatActivity {
         myDbSt = new DatabaseHelperStation(this);
 
         Intent intent = getIntent();
-        id_station = intent.getStringExtra("id");
+        id_station = intent.getStringExtra("id_station");
 
         Cursor cursor_st=myDbSt.selectSingleData(id_station);
         cursor_st.moveToFirst();
@@ -70,44 +64,20 @@ public class ChangeStation extends AppCompatActivity {
             @Override
             public boolean onChildClick(ExpandableListView parent, View v,
                                         int groupPosition, int childPosition, long id) {
-                int gP = groupPosition;
-                int cP = childPosition;
-                String selected_sports = Integer.toString(gP) + "-" + Integer.toString(cP);
-
+                String category_name = parent.getExpandableListAdapter().getGroup(groupPosition).toString();
+                String sports_name = parent.getExpandableListAdapter().getChild(groupPosition, childPosition).toString();
+                Cursor res = myDbSp.selectIDFromCategorySports(category_name, sports_name);
+                res.moveToFirst();
+                String selected_sports = res.getString(0);
 
                 if (!sports.contains(selected_sports)) {
                     sports.add(selected_sports);
                     v.setActivated(true);
-                    v.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
                 } else if (sports.contains(selected_sports)) {
                     sports.remove(selected_sports);
                     v.setActivated(false);
-                    v.setBackgroundColor(Color.TRANSPARENT);
                 }
 
-
-//                if(buffer[index]==0){
-//                    v.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
-//                    buffer[index]=1;
-//                }
-//                else if(buffer[index]==1) {
-//                    v.setBackgroundColor(Color.TRANSPARENT);
-//                    buffer[index]=0;
-//                }
-
-                if (groupPosition == 0) {
-
-
-                } else if (groupPosition == 1) {
-
-
-                } else if (groupPosition == 2) {
-
-
-                } else if (groupPosition == 3) {
-
-
-                }
 
 
                 return false;
@@ -130,10 +100,10 @@ public class ChangeStation extends AppCompatActivity {
 
 
         //Get Data
-        ArrayList<String> endurance_List = getData("0");
-        ArrayList<String> strength_List = getData("1");
-        ArrayList<String> agility_List = getData("2");
-        ArrayList<String> coordination_List = getData("3");
+        ArrayList<String> endurance_List = getData("Ausdauer");
+        ArrayList<String> strength_List = getData("Kraft");
+        ArrayList<String> agility_List = getData("Schnelligkeit");
+        ArrayList<String> coordination_List = getData("Koordination");
 
         listDataChild.put(listDataHeader.get(0), endurance_List);
         listDataChild.put(listDataHeader.get(1), strength_List);
@@ -142,23 +112,14 @@ public class ChangeStation extends AppCompatActivity {
 
     }
 
-    public ArrayList<String> getData(String id_sport_category) {
+    public ArrayList<String> getData(String sport_category) {
         ArrayList<String> SportList = new ArrayList<String>();
 
-        String[] mTestArray = new String[0];
-        if (id_sport_category.equals("0")) {
-            mTestArray = getResources().getStringArray(R.array.endurance_array);
+        Cursor res = myDbSp.selectSingleCategory(sport_category);
+
+        while(res.moveToNext()){
+            SportList.add(res.getString(2));
         }
-        if (id_sport_category.equals("1")) {
-            mTestArray = getResources().getStringArray(R.array.strength_array);
-        }
-        if (id_sport_category.equals("2")) {
-            mTestArray = getResources().getStringArray(R.array.agility_array);
-        }
-        if (id_sport_category.equals("3")) {
-            mTestArray = getResources().getStringArray(R.array.coordination_array);
-        }
-        for (int i=0; i<mTestArray.length; i++) SportList.add(mTestArray[i]);
 
         return SportList;
     }
@@ -186,67 +147,20 @@ public class ChangeStation extends AppCompatActivity {
                 Toast.makeText(ChangeStation.this, "Bitte mindestens eine Disziplin auswählen", Toast.LENGTH_LONG).show();
             }
             else{
-                String category="";
-                String sport_id="";
-                String unit="";
-
                 StringBuilder strBuilder  = new StringBuilder();
-                Cursor cursor_st=myDbSt.selectSingleData(id_station);
-                cursor_st.moveToFirst();
-                String lat=cursor_st.getString(2);
-                String lng=cursor_st.getString(3);
-                String station_sports_id=cursor_st.getString(4);
-                String station_sports[]=station_sports_id.split(",");
-                String single_sports_id;
 
                 for(String s: sports){
-                    String[] splitResult=s.split("-");
-                    category=splitResult[0];
-                    sport_id=splitResult[1];
-                    int inserted=1;
-                    for (int x=0;x<station_sports.length;x++){
-                        single_sports_id=station_sports[x];
-
-                        Cursor cursor_sp=myDbSp.selectSingleData(single_sports_id);
-                        cursor_sp.moveToFirst();
-                        String category_old=cursor_sp.getString(1);
-                        String sport_old=cursor_sp.getString(2);
-
-                        if(category.equals(category_old)&&sport_old.equals(sport_id)){
-                            strBuilder.append(single_sports_id);
-                            strBuilder.append(",");
-                            inserted=0;
-                        }
-
+                    strBuilder.append(s);
+                    strBuilder.append(",");
                 }
-                    if(inserted==1) {
-                        if (category.equals("0")) {
-                            unit = "min";
-                        }
-                        if (category.equals("1")) {
-                            unit = "m";
-                        }
-                        if (category.equals("2")) {
-                            unit = "sek";
-                        }
-                        if (category.equals("3")) {
-                            unit = "m";
-                        }
-                        boolean isInserted_sp = myDbSp.insertData(category, sport_id, unit);
-                        if (isInserted_sp == true) {
-                            Cursor res = myDbSp.getAllData();
-                            res.moveToLast();
-                            strBuilder.append(res.getString(0));
-                            strBuilder.append(",");
-                        }
-                        if (isInserted_sp == false) {
-                        }
-                    }
-                    }
 
                 strBuilder.deleteCharAt(strBuilder.length()-1);
                 String station_sport = strBuilder.toString();
 
+                Cursor res = myDbSt.selectSingleData(id_station);
+                res.moveToFirst();
+                String lat=res.getString(2);
+                String lng=res.getString(3);
 
                 boolean change_st=myDbSt.updateData(id_station, sports_name.getText().toString(), lat, lng, station_sport);
 

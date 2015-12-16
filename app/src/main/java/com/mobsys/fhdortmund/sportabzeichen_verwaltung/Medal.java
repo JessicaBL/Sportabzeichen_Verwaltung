@@ -3,28 +3,18 @@ package com.mobsys.fhdortmund.sportabzeichen_verwaltung;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.CheckBox;
-import android.widget.EditText;
 import android.widget.ExpandableListView;
 import android.widget.ImageView;
-import android.widget.ListAdapter;
-import android.widget.RadioButton;
 import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -226,10 +216,10 @@ public class Medal extends AppCompatActivity {
         listDataHeader.add("Koordination");
 
         //Get Data
-        ArrayList<String> endurance_List = getData("0", athlete_id);
-        ArrayList<String> strength_List = getData("1", athlete_id);
-        ArrayList<String> agility_List = getData("2", athlete_id);
-        ArrayList<String> coordination_List = getData("3", athlete_id);
+        ArrayList<String> endurance_List = getData("Ausdauer", athlete_id);
+        ArrayList<String> strength_List = getData("Kraft", athlete_id);
+        ArrayList<String> agility_List = getData("Schnelligkeit", athlete_id);
+        ArrayList<String> coordination_List = getData("Koordination", athlete_id);
 
         listDataChild.put(listDataHeader.get(0), endurance_List);
         listDataChild.put(listDataHeader.get(1), strength_List);
@@ -238,7 +228,7 @@ public class Medal extends AppCompatActivity {
 
     }
 
-    public ArrayList<String> getData(String id_sport_category, String athlete_id) {
+    public ArrayList<String> getData(String sport_category, String athlete_id) {
         Cursor res = myDbRs.selectSingleDataAthlete(athlete_id);
 
         ArrayList<String> SportList = new ArrayList<String>();
@@ -250,49 +240,34 @@ public class Medal extends AppCompatActivity {
             String result_date = res.getString(4);
             String result_id_pruefer = res.getString(5);
 
-            Cursor res_sports = myDbSp.selectSingleData(id_sports_result_db);
-
-            res_sports.moveToFirst();
-            String sports_category = res_sports.getString(1);
-            String sports = res_sports.getString(2);
-            String sport_unit = res_sports.getString(3);
-
-            String[] mTestArray = new String[0];
-
-            if (id_sport_category.equals("0")) {
-                mTestArray = getResources().getStringArray(R.array.endurance_array);
-            }
-            if (id_sport_category.equals("1")) {
-                mTestArray = getResources().getStringArray(R.array.strength_array);
-            }
-            if (id_sport_category.equals("2")) {
-                mTestArray = getResources().getStringArray(R.array.agility_array);
-            }
-            if (id_sport_category.equals("3")) {
-                mTestArray = getResources().getStringArray(R.array.coordination_array);
-            }
-
-            String sport_name_string = mTestArray[Integer.parseInt(sports)];
-            //String sport_name_string="Test";
 
             Cursor res_Pruefer = myDbPr.getActive();
             res_Pruefer.moveToFirst();
             String current_pruefer_id = res_Pruefer.getString(0);
 
-            if (current_pruefer_id.equals(result_id_pruefer) && id_sport_category.equals(sports_category)) {
+            Cursor res_sports = myDbSp.selectSingleCategory(sport_category);
 
-                Cursor res_ath = myDb.selectSingleDataAthlete(athlete_id);
-                res_ath.moveToFirst();
-                String birthday=res_ath.getString(3);
-                String sex=res_ath.getString(4);
+            while (res_sports.moveToNext()) {
+
+                String id_sports = res_sports.getString(0);
+                String sport_name_string = res_sports.getString(2);
+                String sport_unit = res_sports.getString(3);
+
+                if (current_pruefer_id.equals(result_id_pruefer) && id_sports_result_db.equals(id_sports)) {
+
+                    Cursor res_ath = myDb.selectSingleDataAthlete(athlete_id);
+                    res_ath.moveToFirst();
+                    String birthday = res_ath.getString(3);
+                    String sex = res_ath.getString(4);
 
 
-                //Compare result with target
-                String medal = compareResult(birthday, sex, sports_category, sports, sport_unit, result);
+                    //Compare result with target
+                    String medal = compareResult(birthday, sex, sport_category, sport_name_string, sport_unit, result);
 
-                SportList.add(sport_name_string + ": " + result + " " + sport_unit + ", " + result_date+", "+medal);
-            } else if (id_sport_category.equals(sports_category)) {
-                SportList.add(sport_name_string + ": Ergebnis für Prüfer unsichtbar, " + result_date);
+                    SportList.add(sport_name_string + ": " + result + " " + sport_unit + ", " + result_date + ", " + medal);
+                } else if (id_sports_result_db.equals(id_sports)) {
+                    SportList.add(sport_name_string + ": Ergebnis für Prüfer unsichtbar, " + result_date);
+                }
             }
         }
         if (SportList.isEmpty()) {
@@ -301,7 +276,7 @@ public class Medal extends AppCompatActivity {
         return SportList;
     }
 
-    public String compareResult(String birthday, String sex, String sports_category, String sports, String sports_unit, String result) {
+    public String compareResult(String birthday, String sex, String sports_category, String sports_name, String sports_unit, String result) {
 
         double result_double = Double.parseDouble(result);
         double bronze;
@@ -312,16 +287,16 @@ public class Medal extends AppCompatActivity {
 
         String[] mTestArray = new String[0];
 
-        if (sports_category.equals("0")) {
+        if (sports_category.equals("Ausdauer")) {
             mTestArray = getResources().getStringArray(R.array.m_1990_0_0);
         }
-        if (sports_category.equals("1")) {
+        if (sports_category.equals("Kraft")) {
             mTestArray = getResources().getStringArray(R.array.m_1990_1_3);
         }
-        if (sports_category.equals("2")) {
+        if (sports_category.equals("Schnelligkeit")) {
             mTestArray = getResources().getStringArray(R.array.m_1990_2_0);
         }
-        if (sports_category.equals("3")) {
+        if (sports_category.equals("Koordination")) {
             mTestArray = getResources().getStringArray(R.array.m_1990_3_1);
         }
         bronze=Double.parseDouble(mTestArray[0]);
@@ -335,7 +310,7 @@ public class Medal extends AppCompatActivity {
             if((result_double<=silver)&&(result_double>gold)) medal="Silber";
             if((result_double<=gold)) medal="Gold";
         }
-        //Ergebnisse müssen größer sein als Grenze (-->Zeit)
+        //Ergebnisse müssen größer sein als Grenze (-->Weite)
         if(sports_unit.equals("m")){
             if(result_double<bronze) medal = "Keine Medaille";
             if((result_double>=bronze)&&(result_double<silver)) medal="Bronze";
