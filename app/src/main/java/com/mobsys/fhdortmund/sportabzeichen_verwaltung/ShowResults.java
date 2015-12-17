@@ -18,7 +18,8 @@ public class ShowResults extends AppCompatActivity {
     DatabaseHelper myDb;
     DatabaseHelperSports myDbSp;
     DatabaseHelperResults myDbRs;
-    DatabaseHelperPruefer myDbPr;
+
+    SessionManager session;
 
     ArrayList<String> Result_List= new ArrayList<String>();
 
@@ -36,7 +37,8 @@ public class ShowResults extends AppCompatActivity {
         myDb = new DatabaseHelper(this);
         myDbSp = new DatabaseHelperSports(this);
         myDbRs = new DatabaseHelperResults(this);
-        myDbPr = new DatabaseHelperPruefer(this);
+
+        session = new SessionManager(getApplicationContext());
 
         populateListView();
 
@@ -60,36 +62,32 @@ public class ShowResults extends AppCompatActivity {
 
         while (res_Results.moveToNext()) {
 
-                String id_athlete = res_Results.getString(1);
-                String id_sports = res_Results.getString(2);
-                String result = res_Results.getString(3);
-                String result_nr = res_Results.getString(4);
-                String id_pruefer = res_Results.getString(5);
+            String id_pruefer = res_Results.getString(1);
+            String id_athlete = res_Results.getString(2);
+            String result = res_Results.getString(4);
+            String result_nr = res_Results.getString(5);
 
-                String name;
-                String surname;
-                Cursor res_Athlete = myDb.selectSingleDataAthlete(id_athlete);
-                if(res_Athlete.getCount()==0){
-                    continue;
-                }
-                else {
-                    res_Athlete.moveToFirst();
-                    name = res_Athlete.getString(1);
-                    surname = res_Athlete.getString(2);
-                }
-
-
-                Cursor res_Pruefer = myDbPr.getActive();
-                res_Pruefer.moveToFirst();
-                String cur_pruefer_id = res_Pruefer.getString(0);
-
-                if (cur_pruefer_id.equals(id_pruefer)) {
-                    Result_List.add(name + " " + surname + ": " + result + " " + sport_unit + ", Datum: " + result_nr);
-                } else {
-                    Result_List.add("Ergebnis von " + name + " " + surname + " für Prüfer unsichtbar, Datum: " + result_nr);
-                }
-
+            String name;
+            String surname;
+            Cursor res_Athlete = myDb.selectSingleDataAthlete(id_athlete);
+            if(res_Athlete.getCount()==0){
+                continue;
             }
+            else {
+                res_Athlete.moveToFirst();
+                name = res_Athlete.getString(1);
+                surname = res_Athlete.getString(2);
+            }
+
+            String cur_pruefer_id = session.getUserId();
+
+            if (cur_pruefer_id.equals(id_pruefer)) {
+                Result_List.add(name + " " + surname + ": " + result + " " + sport_unit + ", Datum: " + result_nr);
+            } else {
+                Result_List.add("Ergebnis von " + name + " " + surname + " für Prüfer unsichtbar, Datum: " + result_nr);
+            }
+
+        }
 
 
         if(Result_List.isEmpty()){

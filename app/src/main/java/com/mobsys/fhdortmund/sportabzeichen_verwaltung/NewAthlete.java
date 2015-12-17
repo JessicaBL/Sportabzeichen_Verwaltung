@@ -13,6 +13,11 @@ import android.widget.RadioButton;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+import java.util.UUID;
+
 
 public class NewAthlete extends AppCompatActivity {
 
@@ -87,12 +92,19 @@ public class NewAthlete extends AppCompatActivity {
                 Toast.makeText(NewAthlete.this, "Bitte Geschlecht angeben", Toast.LENGTH_LONG).show();
             }
             else {
-                boolean isInserted = myDb.insertData(editName.getText().toString(),
-                        editSurname.getText().toString(),
+                UUID uuid = UUID.randomUUID();
+                String athlete_id = uuid.toString();
+
+                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+                Date date = new Date();
+                String current_timestamp = dateFormat.format(date);
+
+                boolean isInserted = myDb.insertData(athlete_id, editName.getText().toString(),
+                        editSurname.getText().toString(),sex,
                         String.valueOf(spinnerBirthdayDay.getSelectedItem()) + ". " +
                                 String.valueOf(spinnerBirthdayMonth.getSelectedItem()) + " " +
-                                String.valueOf(spinnerBirthdayYear.getSelectedItem()),
-                        sex);
+                                String.valueOf(spinnerBirthdayYear.getSelectedItem()), current_timestamp, "0"
+                        );
 
                 if (isInserted == true) {
                     Toast.makeText(NewAthlete.this, "Sportler angelegt", Toast.LENGTH_LONG).show();

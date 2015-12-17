@@ -18,7 +18,9 @@ public class ResultsAthlete extends AppCompatActivity {
     DatabaseHelper myDb;
     DatabaseHelperSports myDbSp;
     DatabaseHelperResults myDbRs;
-    DatabaseHelperPruefer myDbPr;
+
+    SessionManager session;
+
     String id_athlete;
     ArrayList<String> Result_List= new ArrayList<String>();
 
@@ -33,7 +35,8 @@ public class ResultsAthlete extends AppCompatActivity {
         myDb = new DatabaseHelper(this);
         myDbSp = new DatabaseHelperSports(this);
         myDbRs = new DatabaseHelperResults(this);
-        myDbPr = new DatabaseHelperPruefer(this);
+
+        session = new SessionManager(getApplicationContext());
 
         populateListView();
     }
@@ -47,10 +50,10 @@ public class ResultsAthlete extends AppCompatActivity {
         res_Athlete.moveToFirst();
         String name = res_Athlete.getString(1);
         String surname = res_Athlete.getString(2);
-        String birthday = res_Athlete.getString(3);
-        String sex = res_Athlete.getString(4);
+        String sex = res_Athlete.getString(3);
+        String birthday = res_Athlete.getString(4);
 
-        getSupportActionBar().setTitle(name+" " + surname+", "+birthday+", "+sex);
+        getSupportActionBar().setTitle(name+" " + surname+", "+sex+", "+birthday);
         getSupportActionBar().setSubtitle("Ergebnisse");
 
         Cursor res_Results = myDbRs.selectSingleDataAthlete(id_athlete);
@@ -60,10 +63,10 @@ public class ResultsAthlete extends AppCompatActivity {
         else {
             while (res_Results.moveToNext()) {
 
-                String id_sports = res_Results.getString(2);
-                String result = res_Results.getString(3);
-                String result_nr = res_Results.getString(4);
-                String id_pruefer = res_Results.getString(5);
+                String id_pruefer = res_Results.getString(1);
+                String id_sports = res_Results.getString(3);
+                String result = res_Results.getString(4);
+                String result_date = res_Results.getString(5);
 
                 Cursor res_Sports = myDbSp.selectSingleData(id_sports);
                 res_Sports.moveToFirst();
@@ -71,17 +74,12 @@ public class ResultsAthlete extends AppCompatActivity {
                 String sports = res_Sports.getString(2);
                 String unit = res_Sports.getString(3);
 
-
-                Cursor res_Pruefer = myDbPr.getActive();
-                res_Pruefer.moveToFirst();
-                String cur_pruefer_id = res_Pruefer.getString(0);
-
-
+                String cur_pruefer_id = session.getUserId();
 
                 if (cur_pruefer_id.equals(id_pruefer)) {
-                    Result_List.add(sports + ": " + result + " " + unit + ", Datum: " + result_nr);
+                    Result_List.add(sports + ": " + result + " " + unit + ", Datum: " + result_date);
                 } else {
-                    Result_List.add(sports + " : Ergebnis für Prüfer unsichtbar, Datum: " + result_nr);
+                    Result_List.add(sports + " : Ergebnis für Prüfer unsichtbar, Datum: " + result_date);
                 }
             }
         }

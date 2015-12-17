@@ -25,7 +25,8 @@ public class Medal extends AppCompatActivity {
     DatabaseHelper myDb;
     DatabaseHelperSports myDbSp;
     DatabaseHelperResults myDbRs;
-    DatabaseHelperPruefer myDbPr;
+
+    SessionManager session;
 
     Spinner spinner_athlete;
     String athlete_id="";
@@ -48,7 +49,8 @@ public class Medal extends AppCompatActivity {
         myDb = new DatabaseHelper(this);
         myDbSp = new DatabaseHelperSports(this);
         myDbRs = new DatabaseHelperResults(this);
-        myDbPr = new DatabaseHelperPruefer(this);
+
+        session = new SessionManager(getApplicationContext());
 
         ArrayList<String> AthletesList = populateSpinner();
 
@@ -235,15 +237,13 @@ public class Medal extends AppCompatActivity {
 
         while (res.moveToNext()) {
 
-            String id_sports_result_db = res.getString(2);
-            String result = res.getString(3);
-            String result_date = res.getString(4);
-            String result_id_pruefer = res.getString(5);
+            String result_id_pruefer = res.getString(1);
+            String id_sports_result_db = res.getString(3);
+            String result = res.getString(4);
+            String result_date = res.getString(5);
 
 
-            Cursor res_Pruefer = myDbPr.getActive();
-            res_Pruefer.moveToFirst();
-            String current_pruefer_id = res_Pruefer.getString(0);
+            String current_pruefer_id = session.getUserId();
 
             Cursor res_sports = myDbSp.selectSingleCategory(sport_category);
 
@@ -257,8 +257,8 @@ public class Medal extends AppCompatActivity {
 
                     Cursor res_ath = myDb.selectSingleDataAthlete(athlete_id);
                     res_ath.moveToFirst();
-                    String birthday = res_ath.getString(3);
-                    String sex = res_ath.getString(4);
+                    String sex = res_ath.getString(3);
+                    String birthday = res_ath.getString(4);
 
 
                     //Compare result with target

@@ -6,6 +6,10 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 public class DatabaseHelperSports extends SQLiteOpenHelper{
 
     public static final String DATABASE_NAME = "sports.db";
@@ -14,6 +18,7 @@ public class DatabaseHelperSports extends SQLiteOpenHelper{
     public static final String COL_2= "CATEGORY";
     public static final String COL_3= "SPORT";
     public static final String COL_4= "UNIT";
+    public static final String COL_5= "PARAMETER";
 
 
 
@@ -23,7 +28,7 @@ public class DatabaseHelperSports extends SQLiteOpenHelper{
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL("create table " + TABLE_NAME + " (ID INTEGER PRIMARY KEY AUTOINCREMENT,CATEGORY TEXT,SPORT TEXT, UNIT TEXT)");
+        db.execSQL("create table " + TABLE_NAME + " (ID INTEGER PRIMARY KEY,CATEGORY TEXT,SPORT TEXT, UNIT TEXT, PARAMETER INTEGER ) ");
     }
 
     @Override
@@ -32,17 +37,19 @@ public class DatabaseHelperSports extends SQLiteOpenHelper{
         onCreate(db);
     }
 
-    public boolean insertData(String category, String sport, String unit){
+    public boolean insertData(String id, String category, String sport, String unit, String parameter){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
+        contentValues.put(COL_1, id);
         contentValues.put(COL_2, category);
         contentValues.put(COL_3, sport);
         contentValues.put(COL_4, unit);
+        contentValues.put(COL_5, parameter);
         long  result = db.insert(TABLE_NAME, null, contentValues);
-        if(result==-1)
-            return false;
-        else
+        if(result!= -1)
             return true;
+        else
+            return false;
     }
 
     public Cursor getAllData(){
@@ -51,14 +58,14 @@ public class DatabaseHelperSports extends SQLiteOpenHelper{
         return res;
     }
 
-    public boolean updateData(String id, String category, String sport, String unit){
+    public boolean updateData(String id, String category, String sport, String unit, String parameter){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
-        contentValues.put(COL_1, id);
         contentValues.put(COL_2, category);
         contentValues.put(COL_3, sport);
         contentValues.put(COL_4, unit);
-        db.update(TABLE_NAME, contentValues, "ID = ?", new String[] { id });
+        contentValues.put(COL_5, parameter);
+        db.update(TABLE_NAME, contentValues, "ID = ?", new String[]{id});
         return true;
     }
 
@@ -73,9 +80,15 @@ public class DatabaseHelperSports extends SQLiteOpenHelper{
         return res;
     }
 
+    public Cursor selectLastData(){
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor res = db.rawQuery("select max(id) from" + TABLE_NAME + "", null);
+        return res;
+    }
+
     public Cursor selectSingleCategory(String category){
         SQLiteDatabase db = this.getWritableDatabase();
-        Cursor res = db.rawQuery("select * from " + TABLE_NAME + " WHERE CATEGORY ='"+category+"'", null);
+        Cursor res = db.rawQuery("select * from " + TABLE_NAME+ " WHERE CATEGORY = '"+category+"'", null);
         return res;
     }
 
@@ -91,7 +104,61 @@ public class DatabaseHelperSports extends SQLiteOpenHelper{
         return res;
     }
 
+    public Cursor selectSingleParameterValue(String id) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor res = db.rawQuery("SELECT PARAMETER FROM " + TABLE_NAME + " WHERE ID ="+id+"", null);
+        return res;
+    }
 
+    public boolean getInitialServerData(Context context){
+
+        JSONParser jsonParser = new JSONParser();
+        JSONArray sports;
+
+        String ip_port = context.getString(R.string.ip_port);
+
+        String URL = "http://"+ ip_port +"/sportabzeichen/sports.php";
+        String RESPONSE_SPORTS = "sports";
+        String RESPONSE_SPORTS_ID = "id";
+        String RESPONSE_SPORTS_CATEGORY = "category";
+        String RESPONSE_SPORTS_SPORT = "sport";
+        String RESPONSE_SPORTS_UNIT = "unit";
+        String RESPONSE_SPORTS_PARAMETER = "parameter";
+
+        boolean success = false;
+
+        JSONObject json = jsonParser.getJSONFromUrl(URL);
+
+        try {
+
+            sports = json.getJSONArray(RESPONSE_SPORTS);
+
+            for (int i=0; i<sports.length(); i++) {
+
+                JSONObject sport = sports.getJSONObject(i);
+
+                String id = sport.getString(RESPONSE_SPORTS_ID);
+                String category = sport.getString(RESPONSE_SPORTS_CATEGORY);
+                String sportValue = sport.getString(RESPONSE_SPORTS_SPORT);
+                String unit = sport.getString(RESPONSE_SPORTS_UNIT);
+                String parameter = sport.getString(RESPONSE_SPORTS_PARAMETER);
+
+                boolean isInserted = insertData(id, category, sportValue, unit, parameter);
+
+                if(isInserted){
+                    success = true;
+                } else {
+                    break;
+                }
+            }
+
+        } catch (JSONException e){
+            e.printStackTrace();
+        }
+
+        return success;
+
+    }
 
 }
 

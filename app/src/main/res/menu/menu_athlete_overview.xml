@@ -13,7 +13,4 @@
         android:orderInCategory="100" app:showAsAction="always"
         android:icon="@drawable/ic_person_add_white_24dp"
         />
-    <item android:id="@+id/action_refresh" android:title="Aktualisieren"
-        android:orderInCategory="100" app:showAsAction="never"
-        />
 </menu>

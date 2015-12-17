@@ -57,9 +57,9 @@ public class AthleteOverview extends AppCompatActivity {
             String id=res.getString(0);
             String name=res.getString(1);
             String surname=res.getString(2);
-            String birthday=res.getString(3);
-            String sex=res.getString(4);
-            AthletesList.add(id+ " - "+name+" "+surname+", "+birthday+", "+sex);
+            String sex=res.getString(3);
+            String birthday=res.getString(4);
+            AthletesList.add(id+ " - "+name+" "+surname+", "+sex+", "+birthday);
         }
         ListAdapter adapter = new ArrayAdapter<>(AthleteOverview.this, android.R.layout.simple_list_item_1,AthletesList);
 
@@ -84,10 +84,8 @@ public class AthleteOverview extends AppCompatActivity {
         String[] splitResult = selectedFromList.split(" ");
         String id_athlete = splitResult[0];
         switch (item.getItemId()) {
-            case R.id.delete_athlete:
-                myDb.deleteData(id_athlete);
-                //   Show message
-                Toast.makeText(getApplicationContext(), "Sportler gelöscht", Toast.LENGTH_LONG).show();
+            case R.id.edit_athlete:
+                //EDIT ATHLETE NOCH SCHREIBEN!!!!
 
             case R.id.results_athlete:
                 Intent intent = new Intent(this, ResultsAthlete.class);
@@ -191,9 +189,6 @@ public class AthleteOverview extends AppCompatActivity {
         if (id == R.id.action_new_athlete) {
             Intent intent = new Intent(this, NewAthlete.class);
             startActivity(intent);
-        }
-        if (id == R.id.action_refresh) {
-            recreate();
         }
 
         if(id ==R.id.action_search_ao){

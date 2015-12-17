@@ -16,11 +16,13 @@ import android.widget.EditText;
 import android.widget.ExpandableListView;
 import android.widget.Toast;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-
-import static com.mobsys.fhdortmund.sportabzeichen_verwaltung.R.color.colorPrimary;
+import java.util.Locale;
+import java.util.UUID;
 
 public class NewSports extends AppCompatActivity {
 
@@ -191,7 +193,14 @@ public class NewSports extends AppCompatActivity {
                 strBuilder.deleteCharAt(strBuilder.length()-1);
                 String station_sport = strBuilder.toString();
 
-                boolean isInserted_st = myDbSt.insertData(sports_name.getText().toString(), lat, lng, station_sport);
+                UUID uuid = UUID.randomUUID();
+                String station_id = uuid.toString();
+
+                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+                Date date = new Date();
+                String current_timestamp = dateFormat.format(date);
+
+                boolean isInserted_st = myDbSt.insertData(station_id, sports_name.getText().toString(), lat, lng, station_sport, current_timestamp, "0");
                 if (isInserted_st == true) {
                     Toast.makeText(NewSports.this, "Sportstation angelegt", Toast.LENGTH_LONG).show();
                     Intent intent = new Intent(NewSports.this, Maps.class);

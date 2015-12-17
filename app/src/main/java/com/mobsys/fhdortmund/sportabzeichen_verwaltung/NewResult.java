@@ -18,17 +18,20 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.UUID;
 
 public class NewResult extends AppCompatActivity {
 
     DatabaseHelper myDb;
     DatabaseHelperSports myDbSp;
     DatabaseHelperResults myDbRs;
-    DatabaseHelperPruefer myDbPr;
+
+    SessionManager session;
 
     String id_athlete;
     Spinner spinner_athlete;
@@ -52,15 +55,13 @@ public class NewResult extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-
         myDb = new DatabaseHelper(this);
         myDbSp = new DatabaseHelperSports(this);
         myDbRs = new DatabaseHelperResults(this);
-        myDbPr = new DatabaseHelperPruefer(this);
 
-        Cursor resPr = myDbPr.getActive();
-        resPr.moveToFirst();
-        id_pruefer = resPr.getString(0);
+        session = new SessionManager(getApplicationContext());
+
+        id_pruefer = session.getUserId();
 
 
         Intent intent = getIntent();
@@ -128,8 +129,8 @@ public class NewResult extends AppCompatActivity {
 
         Cursor res = myDb.selectSingleDataAthlete(selected_id);
         res.moveToFirst();
-        String birthday = res.getString(3);
-        String sex = res.getString(4);
+        String sex = res.getString(3);
+        String birthday = res.getString(4);
 
         String birthday_split[] = birthday.split(" ");
         int birthyear = Integer.parseInt(birthday_split[2]);
@@ -279,10 +280,12 @@ public class NewResult extends AppCompatActivity {
             }else if(checkTries(id_athlete, id_sports.toString())==false){
                 Toast.makeText(NewResult.this, "Anzahl der Versuche für diese Disziplin überschritten", Toast.LENGTH_LONG).show();
             } else {
-                    String currentDateString = DateFormat.getDateInstance().format(new Date());
+                UUID uuid = UUID.randomUUID();
+                String result_id = uuid.toString();
 
-                    boolean isInserted = myDbRs.insertData(id_athlete.toString(), id_sports.toString()
-                            , result.getText().toString(), currentDateString.toString(), id_pruefer.toString());
+                String currentDateString = DateFormat.getDateInstance().format(new Date());
+
+                boolean isInserted = myDbRs.insertData(result_id, id_pruefer, id_athlete, id_sports, result.getText().toString(), currentDateString.toString(), "0");
 
                     if (isInserted == true) {
                         Toast.makeText(NewResult.this, "Ergebnis eingetragen", Toast.LENGTH_LONG).show();
@@ -316,14 +319,16 @@ public class NewResult extends AppCompatActivity {
 
         int counter=0;
         while(res_results.moveToNext()){
-            String sports_id_result= res_results.getString(2);
-            String sports_date= res_results.getString(4);
+            String sports_id_result= res_results.getString(3);
+            String sports_date= res_results.getString(5);
+
             String sports_dateSplit[]=sports_date.split("\\.");
+
             if(cur_year.equals(sports_dateSplit[2]) && sports_id_result.equals(id_sports)){
                 counter++;
             }
         }
-        if (counter<=2) return true;
+        if (counter<=3) return true;
         else return false;
 
     }

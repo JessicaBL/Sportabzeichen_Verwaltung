@@ -12,9 +12,13 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ExpandableListView;
 import android.widget.Toast;
+
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 
 public class ChangeStation extends AppCompatActivity {
 
@@ -66,6 +70,7 @@ public class ChangeStation extends AppCompatActivity {
                                         int groupPosition, int childPosition, long id) {
                 String category_name = parent.getExpandableListAdapter().getGroup(groupPosition).toString();
                 String sports_name = parent.getExpandableListAdapter().getChild(groupPosition, childPosition).toString();
+
                 Cursor res = myDbSp.selectIDFromCategorySports(category_name, sports_name);
                 res.moveToFirst();
                 String selected_sports = res.getString(0);
@@ -162,7 +167,11 @@ public class ChangeStation extends AppCompatActivity {
                 String lat=res.getString(2);
                 String lng=res.getString(3);
 
-                boolean change_st=myDbSt.updateData(id_station, sports_name.getText().toString(), lat, lng, station_sport);
+                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+                Date date = new Date();
+                String current_timestamp = dateFormat.format(date);
+
+                boolean change_st=myDbSt.updateData(id_station, sports_name.getText().toString(), lat, lng, station_sport, current_timestamp, "0");
 
                 if (change_st == true) {
                     Toast.makeText(ChangeStation.this, "Sportstation geändert", Toast.LENGTH_LONG).show();

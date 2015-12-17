@@ -22,7 +22,6 @@ import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.Toast;
 
-import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -32,7 +31,6 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -350,8 +348,8 @@ public class Maps extends AppCompatActivity implements OnMapReadyCallback, Googl
 
     }
 
-    public  ArrayList<String> CreateSportsList(String id_sports) {
-        Cursor res = myDbSt.selectSingleData(id_sports);
+    public  ArrayList<String> CreateSportsList(String id_station) {
+        Cursor res = myDbSt.selectSingleData(id_station);
         res.moveToFirst();
         String all_sports=res.getString(4);
 

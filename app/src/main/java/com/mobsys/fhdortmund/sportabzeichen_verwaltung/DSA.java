@@ -16,7 +16,6 @@ public class DSA extends AppCompatActivity {
     DatabaseHelper myDb;
     DatabaseHelperSports myDbSp;
     DatabaseHelperResults myDbRs;
-    DatabaseHelperPruefer myDbPr;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,7 +29,6 @@ public class DSA extends AppCompatActivity {
         myDb = new DatabaseHelper(this);
         myDbSp = new DatabaseHelperSports(this);
         myDbRs = new DatabaseHelperResults(this);
-        myDbPr = new DatabaseHelperPruefer(this);
 
         Intent intent = getIntent();
         endurance = intent.getStringExtra("endurance");
@@ -80,7 +78,7 @@ public class DSA extends AppCompatActivity {
         res.moveToFirst();
         String name = res.getString(1);
         String surname = res.getString(2);
-        String birthday = res.getString(3);
+        String birthday = res.getString(4);
 
         String infos = name+" "+ surname;
         athlete_name.setText(infos);
