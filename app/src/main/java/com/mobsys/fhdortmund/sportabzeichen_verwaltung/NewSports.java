@@ -1,6 +1,5 @@
 package com.mobsys.fhdortmund.sportabzeichen_verwaltung;
 
-import android.annotation.TargetApi;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Color;
@@ -95,7 +94,6 @@ public class NewSports extends AppCompatActivity {
 
 
         expListView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
-            @TargetApi(Build.VERSION_CODES.M)
             @Override
             public boolean onChildClick(ExpandableListView parent, View v,
                                         int groupPosition, int childPosition, long id) {

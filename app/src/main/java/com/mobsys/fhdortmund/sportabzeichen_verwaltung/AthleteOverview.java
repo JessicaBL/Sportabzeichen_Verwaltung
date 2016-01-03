@@ -83,15 +83,16 @@ public class AthleteOverview extends AppCompatActivity {
 
         String[] splitResult = selectedFromList.split(" ");
         String id_athlete = splitResult[0];
-        switch (item.getItemId()) {
-            case R.id.edit_athlete:
-                //EDIT ATHLETE NOCH SCHREIBEN!!!!
 
-            case R.id.results_athlete:
-                Intent intent = new Intent(this, ResultsAthlete.class);
-                intent.putExtra("id_athlete", id_athlete);
-                startActivity(intent);
-
+        if (item.getItemId()==R.id.edit_athlete){
+            Intent intent1 = new Intent(this, UpdateAthlete.class);
+            intent1.putExtra("id_athlete", id_athlete);
+            startActivity(intent1);
+        }
+        if(item.getItemId()==R.id.results_athlete){
+            Intent intent = new Intent(this, ResultsAthlete.class);
+            intent.putExtra("id_athlete", id_athlete);
+            startActivity(intent);
         }
         return true;
     }

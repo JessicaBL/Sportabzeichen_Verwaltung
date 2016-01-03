@@ -20,7 +20,7 @@
             android:name=".MainActivity"
             android:label="@string/title_activity_MainActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/AppTheme.NoActionBar" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -84,6 +84,11 @@
             android:name=".ChangeStation"
             android:label="@string/title_activity_change_station"
             android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".UpdateAthlete"
+            android:label="@string/title_activity_update_athlete"
+            android:theme="@style/AppTheme.NoActionBar" >
+        </activity>
     </application>
 
 </manifest>
