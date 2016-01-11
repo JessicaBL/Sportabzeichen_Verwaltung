@@ -1,11 +1,8 @@
 package com.mobsys.fhdortmund.sportabzeichen_verwaltung;
 
 import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.database.Cursor;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -14,20 +11,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
 
-    private ProgressDialog pDialog;
-
     SessionManager session;
-    DatabaseHelper myDb;
-    DatabaseHelperCondition myDbCon;
-    DatabaseHelperParameter myDbPar;
-    DatabaseHelperResults myDbRs;
-    DatabaseHelperSports myDbSp;
-    DatabaseHelperStation myDbSt;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,18 +29,8 @@ public class MainActivity extends AppCompatActivity {
         session.checkLogin();
         setPrueferName();
 
-        myDb = new DatabaseHelper(this);
-        myDbCon = new DatabaseHelperCondition(this);
-        myDbPar = new DatabaseHelperParameter(this);
-        myDbRs = new DatabaseHelperResults(this);
-        myDbSp = new DatabaseHelperSports(this);
-        myDbSt = new DatabaseHelperStation(this);
-
-        boolean isSynced = session.getDbSynced();
-
-        if(!isSynced && session.isLoggedIn()){
-            DbSyncTask dbSyncTask = new DbSyncTask();
-            dbSyncTask.execute();
+        if (session.isLoggedIn()){
+            SyncUtils.CreateSyncAccount(getApplicationContext());
         }
     }
 
@@ -156,86 +133,4 @@ public class MainActivity extends AppCompatActivity {
 
         return super.onKeyDown(keycode, e);
     }
-
-    class DbSyncTask extends AsyncTask<String,String,String> {
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            //Show progress dialog during task execution
-            pDialog = new ProgressDialog(MainActivity.this);
-            pDialog.setMessage("Datenbanksynchronisation..");
-            pDialog.setIndeterminate(false);
-            pDialog.setCancelable(true);
-            pDialog.show();
-        }
-
-        @Override
-        protected String doInBackground(String... args) {
-
-            boolean successfulSyncAthl = false;
-            boolean successfulSyncCon = false;
-            boolean successfulSyncPar = false;
-            boolean successfulSyncRs = false;
-            boolean successfulSyncSp = false;
-            boolean successfulSyncSt = false;
-
-            Cursor res_athl = myDb.getAllData();
-            if(res_athl.getCount()==0){
-                successfulSyncAthl = myDb.getInitialServerData(getApplicationContext());
-            } else {
-                successfulSyncAthl = true;
-            }
-
-            Cursor res_con = myDbCon.getAllData();
-            if(res_con.getCount()==0){
-                successfulSyncCon = myDbCon.getInitialServerData(getApplicationContext());
-            } else {
-                successfulSyncCon = true;
-            }
-
-            Cursor res_par = myDbPar.getAllData();
-            if(res_par.getCount()==0){
-                successfulSyncPar = myDbPar.getInitialServerData(getApplicationContext());
-            } else {
-                successfulSyncPar = true;
-            }
-
-            Cursor res_rs = myDbRs.getAllData();
-            if(res_rs.getCount()==0){
-                successfulSyncRs = myDbRs.getInitialServerData(getApplicationContext());
-            } else {
-                successfulSyncRs = true;
-            }
-
-            Cursor res_sp = myDbSp.getAllData();
-            if(res_sp.getCount()==0){
-                successfulSyncSp = myDbSp.getInitialServerData(getApplicationContext());
-            } else {
-                successfulSyncSp = true;
-            }
-
-            Cursor res_st = myDbSt.getAllData();
-            if(res_st.getCount()==0){
-                successfulSyncSt = myDbSt.getInitialServerData(getApplicationContext());
-            } else {
-                successfulSyncSt = true;
-            }
-
-            if (successfulSyncAthl && successfulSyncCon && successfulSyncPar && successfulSyncRs && successfulSyncSp && successfulSyncSt) {
-                session.setDBSynced();
-                return "Datenbank erfolgreich synchronisiert!";
-            } else {
-                return "Fehler bei der Datenbanksynchronisation!";
-            }
-        }
-
-        @Override
-        protected void onPostExecute(String response) {
-
-            pDialog.dismiss();
-            Toast.makeText(getApplicationContext(), response, Toast.LENGTH_LONG).show();
-        }
-    }
-
 }

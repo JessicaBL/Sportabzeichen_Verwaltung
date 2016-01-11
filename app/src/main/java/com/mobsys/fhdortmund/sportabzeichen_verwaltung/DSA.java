@@ -25,7 +25,6 @@ public class DSA extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-
         myDb = new DatabaseHelper(this);
         myDbSp = new DatabaseHelperSports(this);
         myDbRs = new DatabaseHelperResults(this);

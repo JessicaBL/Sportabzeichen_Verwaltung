@@ -65,13 +65,17 @@ public class DatabaseHelperSports extends SQLiteOpenHelper{
         contentValues.put(COL_3, sport);
         contentValues.put(COL_4, unit);
         contentValues.put(COL_5, parameter);
-        db.update(TABLE_NAME, contentValues, "ID = ?", new String[]{id});
-        return true;
+        return db.update(TABLE_NAME, contentValues, "ID = ?", new String[] { id }) > 0 ;
     }
 
-    public Integer deleteData(String id){
+    public boolean deleteData(String id){
         SQLiteDatabase db = this.getWritableDatabase();
-        return db.delete(TABLE_NAME, "ID = ?", new String[]{id});
+        return db.delete(TABLE_NAME, "ID = ?", new String[]{id}) > 0;
+    }
+
+    public boolean deleteAllData() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        return db.delete(TABLE_NAME, "1", null) > 0;
     }
 
     public Cursor selectSingleData(String id){
@@ -110,12 +114,10 @@ public class DatabaseHelperSports extends SQLiteOpenHelper{
         return res;
     }
 
-    public boolean getInitialServerData(Context context){
+    public boolean getInitialServerData(String ip_port){
 
         JSONParser jsonParser = new JSONParser();
         JSONArray sports;
-
-        String ip_port = context.getString(R.string.ip_port);
 
         String URL = "http://"+ ip_port +"/sportabzeichen/sports.php";
         String RESPONSE_SPORTS = "sports";

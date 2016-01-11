@@ -10,7 +10,9 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.utils.URLEncodedUtils;
+import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -35,7 +37,7 @@ public class JSONParser {
     public JSONParser() {
     }
 
-    public JSONObject getJSONFromUrl(String url){
+    public JSONObject getJSONFromUrl(String url) {
 
         try {
 
@@ -76,11 +78,67 @@ public class JSONParser {
         return jObj;
     }
 
+    public JSONObject postJSON(String url, JSONArray jsonData) {
+
+        try {
+
+            DefaultHttpClient httpClient = new DefaultHttpClient();
+            HttpPost httpPost = new HttpPost(url);
+            httpPost.setEntity(new ByteArrayEntity(jsonData.toString().getBytes("UTF8")));
+
+            HttpResponse httpResponse = httpClient.execute(httpPost);
+            HttpEntity httpEntity = httpResponse.getEntity();
+            is = httpEntity.getContent();
+
+
+        } catch (UnsupportedEncodingException e){
+            e.printStackTrace();
+        } catch (ClientProtocolException e){
+            e.printStackTrace();
+        } catch (IOException e){
+            e.printStackTrace();
+        }
+
+        try
+
+        {
+            BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+            StringBuilder sb = new StringBuilder();
+            String line = null;
+            while ((line = reader.readLine()) != null) {
+                sb.append(line);
+            }
+            is.close();
+            json = sb.toString();
+        } catch (
+                Exception e
+                )
+
+        {
+            Log.e("Buffer Error", "Error converting result " + e.toString());
+        }
+
+        try
+
+        {
+            jObj = new JSONObject(json);
+        } catch (
+                JSONException e
+                )
+
+        {
+            Log.e("JSON Parser", "Error parsing data " + e.toString());
+        }
+
+        return jObj;
+    }
+
+
     public JSONObject makeHttpRequest(String url, String method, List<NameValuePair> params) {
 
         try {
 
-            if(method == "POST") {
+            if (method == "POST") {
 
                 DefaultHttpClient httpClient = new DefaultHttpClient();
                 HttpPost httpPost = new HttpPost(url);

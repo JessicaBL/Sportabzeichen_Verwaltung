@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -31,7 +32,7 @@ public class DatabaseHelperResults extends SQLiteOpenHelper{
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL("create table " + TABLE_NAME + " (ID INTEGER PRIMARY KEY, ID_PRUEFER INTEGER, ID_ATHLETE INTEGER, ID_SPORTS INTEGER, RESULT REAL, RESULT_DATE TEXT, SERVER_SYNCED INTEGER )");
+        db.execSQL("create table " + TABLE_NAME + " (ID TEXT PRIMARY KEY, ID_PRUEFER INTEGER, ID_ATHLETE INTEGER, ID_SPORTS INTEGER, RESULT REAL, RESULT_DATE TEXT, SERVER_SYNCED INTEGER )");
     }
 
     @Override
@@ -72,19 +73,29 @@ public class DatabaseHelperResults extends SQLiteOpenHelper{
         contentValues.put(COL_5, result);
         contentValues.put(COL_6, result_date);
         contentValues.put(COL_7, server_synced);
-        db.update(TABLE_NAME, contentValues, "ID = ?", new String[] { id });
-        return true;
+        return db.update(TABLE_NAME, contentValues, "ID = ?", new String[] { id }) > 0 ;
     }
 
-    public Integer deleteData(String id){
+    public boolean deleteData(String id){
         SQLiteDatabase db = this.getWritableDatabase();
-        return db.delete(TABLE_NAME, "ID = ?", new String[]{id});
+        return db.delete(TABLE_NAME, "ID = ?", new String[]{id}) > 0;
+    }
+
+    public boolean deleteAllData() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        return db.delete(TABLE_NAME, "1", null) > 0;
+    }
+
+    public Cursor selectSingleData(String id){
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor res = db.rawQuery("select * from " + TABLE_NAME + " WHERE id ='" + id + "'", null);
+        return res;
     }
 
     //Gibt die Daten eines Athleten zurück
     public Cursor selectSingleDataAthlete(String id_athlete){
         SQLiteDatabase db = this.getWritableDatabase();
-        Cursor res = db.rawQuery("select * from " + TABLE_NAME + " WHERE id_athlete =" + id_athlete + "", null);
+        Cursor res = db.rawQuery("select * from " + TABLE_NAME + " WHERE id_athlete ='" + id_athlete + "'", null);
         return res;
     }
 
@@ -94,13 +105,16 @@ public class DatabaseHelperResults extends SQLiteOpenHelper{
         return res;
     }
 
-    public boolean getInitialServerData(Context context){
+    public Cursor getSyncRows() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor res = db.rawQuery("SELECT * FROM " + TABLE_NAME + " WHERE server_synced=0", null);
+        return res;
+    }
+
+    public boolean getInitialServerData(String ip_port){
 
         JSONParser jsonParser = new JSONParser();
         JSONArray results;
-
-        String ip_port = context.getString(R.string.ip_port);
-
 
         String URL = "http://"+ip_port+"/sportabzeichen/results.php";
         String RESPONSE_RESULTS = "results";
@@ -147,5 +161,143 @@ public class DatabaseHelperResults extends SQLiteOpenHelper{
 
     }
 
+    //Sync data between local and remote db
+    public boolean syncData(String ip_port) {
+
+        JSONParser jsonParser = new JSONParser();
+        JSONArray results;
+
+        String URL = "http://"+ip_port+"/sportabzeichen/results.php";
+        String REQUEST_RESULTS = "results";
+        String REQUEST_RESULTS_ID = "id";
+        String REQUEST_RESULTS_ID_PRUEFER = "id_pruefer";
+        String REQUEST_RESULTS_ID_ATHLETE = "id_athlete";
+        String REQUEST_RESULTS_ID_SPORTS = "id_sports";
+        String REQUEST_RESULTS_RESULT = "result";
+        String REQUEST_RESULTS_RESULT_DATE = "result_date";
+        String REQUEST_SUCCESS = "success";
+
+        boolean successSyncLocalToServer = false;
+        boolean success = false;
+
+        try {
+            Cursor res = getSyncRows();
+
+            Log.d("Sync results db", "Start syncing dbs - sync local to remote");
+
+            if (res.getCount() <= 0) {
+                successSyncLocalToServer = true;
+            } else {
+                JSONArray json = new JSONArray();
+                //Sync local unsynced rows with remote db
+                while (res.moveToNext()) {
+
+                    JSONObject data = new JSONObject();
+
+                    data.put(REQUEST_RESULTS_ID, res.getString(0));
+                    data.put(REQUEST_RESULTS_ID_PRUEFER, res.getString(1));
+                    data.put(REQUEST_RESULTS_ID_ATHLETE, res.getString(2));
+                    data.put(REQUEST_RESULTS_ID_SPORTS, res.getString(3));
+                    data.put(REQUEST_RESULTS_RESULT, res.getString(4));
+                    data.put(REQUEST_RESULTS_RESULT_DATE, res.getString(5));
+
+                    json.put(data);
+
+                }
+
+                JSONObject jsonReq = jsonParser.postJSON(URL, json);
+
+                int reqSuccess = jsonReq.getInt(REQUEST_SUCCESS);
+
+                if (reqSuccess == 1) {
+                    successSyncLocalToServer = true;
+                } else {
+                    Log.d("Sync results db", "Failed to sync results data from local db to server, " + json.toString());
+                }
+            }
+
+            if (!successSyncLocalToServer) {
+                return success;
+            } else {
+
+                Log.d("Sync results db", "Sync remote to local");
+                Cursor resAll = getAllData();
+
+                JSONObject json = jsonParser.getJSONFromUrl(URL);
+                results = json.getJSONArray(REQUEST_RESULTS);
+
+                Log.d("Sync results db", "Deleting rows..");
+                //Find deleted rows on server and delete them on local db
+                while (resAll.moveToNext()) {
+                    String id = resAll.getString(0);
+
+                    boolean exist = false;
+
+                    for (int i = 0; i < results.length(); i++) {
+                        JSONObject result = results.getJSONObject(i);
+
+                        String idServer = result.getString(REQUEST_RESULTS_ID);
+
+                        if (id.equals(idServer)) {
+                            exist = true;
+                        }
+                    }
+
+                    if (!exist) {
+                        boolean deleted = deleteData(id);
+
+                        if (!deleted) {
+                            Log.d("Sync results db", "Something went wrong during deleting results..");
+                            successSyncLocalToServer = false;
+                            break;
+                        }
+                    }
+                }
+
+                if (!successSyncLocalToServer) {
+                    return success;
+                    //Sync remote rows with local rows
+                } else {
+                    Log.d("Sync results db", "Insert rows...");
+                    for (int i = 0; i < results.length(); i++) {
+                        JSONObject result = results.getJSONObject(i);
+
+                        String resultId = result.getString(REQUEST_RESULTS_ID);
+
+                        Cursor resRs = selectSingleData(resultId);
+
+                        //Copy remote rows to local db if rows with specified id don't exist on local db
+                        if (!resRs.moveToFirst()) {
+
+                            String id_pruefer = result.getString(REQUEST_RESULTS_ID_PRUEFER);
+                            String id_athlete = result.getString(REQUEST_RESULTS_ID_ATHLETE);
+                            String id_sports = result.getString(REQUEST_RESULTS_ID_SPORTS);
+                            String resultValue = result.getString(REQUEST_RESULTS_RESULT);
+                            String result_date = result.getString(REQUEST_RESULTS_RESULT_DATE);
+
+                            boolean isInserted = insertData(resultId, id_pruefer, id_athlete, id_sports, resultValue, result_date, "1");
+
+                            if (!isInserted) {
+                                success = false;
+                                Log.d("Sync results db", "Error during inserting new row in local db..");
+                                break;
+                            } else {
+                                success = true;
+                            }
+                        } else {
+                            success = true;
+                        }
+                    }
+
+                    return success;
+
+                }
+            }
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
 }
 

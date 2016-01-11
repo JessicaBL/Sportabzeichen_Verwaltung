@@ -8,6 +8,7 @@ import android.content.SharedPreferences.Editor;
 
 /**
  * Created by bleile on 16.12.2015.
+ * Manage all session variables from the SharedPreferences class
  */
 public class SessionManager {
 
@@ -18,7 +19,7 @@ public class SessionManager {
     int PRIVATE_MODE = 0;
 
     private static final String PREF_NAME = "DSAAppPref";
-    private static final String IS_SYNCED = "IsSynced";
+    private static final String DATABASE_LOADED = "DBLoaded";
     private static final String IS_LOGIN = "IsLoggedIn";
     public static final String KEY_ID = "id";
     public static final String KEY_NAME = "name";
@@ -29,8 +30,8 @@ public class SessionManager {
         editor = pref.edit();
     }
 
-    public void setDBSynced() {
-        editor.putBoolean(IS_SYNCED, true);
+    public void setDBLoaded() {
+        editor.putBoolean(DATABASE_LOADED, true);
         editor.commit();
     }
 
@@ -51,10 +52,10 @@ public class SessionManager {
         _context.startActivity(login);
     }
 
-    public boolean getDbSynced() {
-        boolean isSynced = pref.getBoolean(IS_SYNCED, false);
+    public boolean getDBLoaded() {
+        boolean dbLoaded = pref.getBoolean(DATABASE_LOADED, false);
 
-        return isSynced;
+        return dbLoaded;
     }
 
     public String getUserId(){
