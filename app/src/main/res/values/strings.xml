@@ -24,5 +24,32 @@
     <string name="title_activity_change_station">ChangeStation</string>
     <string name="ip_port">192.168.0.21:80</string>
     <string name="title_activity_update_athlete">UpdateAthlete</string>
+    <string name="title_activity_help">Hilfe</string>
+    <string name="title_activity_hilfe">Hilfe</string>
+    <string name="large_text">
+        Mit dieser App können Ergebnisse für das Deutsche Sportabzeichen einfach angelegt ausgewertet werden.\n
+        Damit die Informationen mit dem Server abgeglichen werden können, ist eine Internetverbindung notwendig.\n\n
+
+        Sportler anlegen\n
+        Klicken Sie im Hauptmenü auf den Button "Sportler". Eine Übersicht der bereits vorhandenen Sportler wird
+        angezeigt. Um einen neuen Sportler anzulegen, drücken Sie in der Menüleiste auf das "Sportler hinzufügen"-Symbol.
+        Geben Sie in dem nun erscheinenden Menü die Informationen über den Sportler ein und Drücken Sie in der
+        Menüleiste das Häkchen, um den Sportler hinzuzufügen. \n\n
+
+        Sportstätte anlegen\n
+        Klicken Sie im Hauptmenü auf den Button "Karte". Drücken und halten Sie die Karte anschließend an der gewünschten Position.
+        Ein Menü erscheint, mit dem Sie die Station anlegen können.\n
+        Geben Sie der Sportstätte einen Namen und wählen Sie unter "Disziplinen" die angebotenen Sportarten aus.\n\n
+
+        Ergebnisse eintragen\n
+        Klicken Sie auf der Karte auf eine der angelegten Sportstationen. Wählen Sie in dem nun erscheinendem
+        Menü in der Dropdown-Liste die gewünschte Disziplin aus und drücken Sie "Ergebnisse eintragen".\n\n
+
+        Ergebnisse auswerten\n
+        Klicken Sie im Hauptmenü auf den Button "Ergebnisse auswerten". Wählen Sie hier den gewünschten Sportler aus
+        und wählen Sie aus jeder der Disziplin-Kategorien eines der Ergebnisse aus. Das Zwischenergebnis für jede
+        Disziplin wird unter "Status" angezeigt. Um die Gesamtauswertung für das Deutsche Sportabzeichen zu erhalten,
+        klicken Sie in der Menüleiste auf das Häkchen.\n\n</string>
+    <string name="action_settings">Settings</string>
 
 </resources>

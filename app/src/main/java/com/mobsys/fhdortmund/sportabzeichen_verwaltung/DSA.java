@@ -59,12 +59,12 @@ public class DSA extends AppCompatActivity {
         TextView medal=(TextView) findViewById(R.id.textView_medal);
 
         if(sum_medal<8){
-            medal.setText("Bronze");
+            medal.setText("Bronze ("+sum_medal+" Punkte)");
         }
         else if(sum_medal<11){
-            medal.setText("Silber");
+            medal.setText("Silber ("+sum_medal+" Punkte)");
         }
-        else medal.setText("Gold");
+        else medal.setText("Gold ("+sum_medal+" Punkte)");
     }
 
 
@@ -87,21 +87,21 @@ public class DSA extends AppCompatActivity {
 
     public  int calculate_medal(String endurance, String strength, String agility, String coordination) {
         int sum=0;
-        if (endurance.contains("Bronze"))sum=+1;
-        if (endurance.contains("Silber"))sum=+2;
-        if (endurance.contains("Gold"))sum=+3;
+        if (endurance.contains("Bronze"))sum=sum+1;
+        if (endurance.contains("Silber"))sum=sum+2;
+        if (endurance.contains("Gold"))sum=sum+3;
 
-        if (strength.contains("Bronze"))sum=+1;
-        if (strength.contains("Silber"))sum=+2;
-        if (strength.contains("Gold"))sum=+3;
+        if (strength.contains("Bronze"))sum=sum+1;
+        if (strength.contains("Silber"))sum=sum+2;
+        if (strength.contains("Gold"))sum=sum+3;
 
-        if (agility.contains("Bronze"))sum=+1;
-        if (agility.contains("Silber"))sum=+2;
-        if (agility.contains("Gold"))sum=+3;
+        if (agility.contains("Bronze"))sum=sum+1;
+        if (agility.contains("Silber"))sum=sum+2;
+        if (agility.contains("Gold"))sum=sum+3;
 
-        if (coordination.contains("Bronze"))sum=+1;
-        if (coordination.contains("Silber"))sum=+2;
-        if (coordination.contains("Gold"))sum=+3;
+        if (coordination.contains("Bronze"))sum=sum+1;
+        if (coordination.contains("Silber"))sum=sum+2;
+        if (coordination.contains("Gold"))sum=sum+3;
 
         return sum;
     }

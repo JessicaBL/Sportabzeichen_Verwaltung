@@ -79,6 +79,7 @@
         android:layout_alignStart="@+id/imageButton_athletes"
         android:src="@drawable/hilfe"
         style="?android:attr/borderlessButtonStyle"
+        android:onClick="showHelp"
         />
 
 </RelativeLayout>

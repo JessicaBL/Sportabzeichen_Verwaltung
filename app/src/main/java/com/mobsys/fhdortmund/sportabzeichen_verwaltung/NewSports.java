@@ -106,7 +106,7 @@ public class NewSports extends AppCompatActivity {
 
                 if (!sports.contains(selected_sports)) {
                     sports.add(selected_sports);
-                    v.setBackgroundColor(Color.RED);
+                    v.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
                     v.setActivated(true);
                 } else if (sports.contains(selected_sports)) {
                     sports.remove(selected_sports);

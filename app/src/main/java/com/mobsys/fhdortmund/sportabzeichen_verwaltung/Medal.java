@@ -304,14 +304,14 @@ public class Medal extends AppCompatActivity {
         gold=Double.parseDouble(mTestArray[2]);
 
         //Ergebnisse müssen kleiner sein als Grenze (-->Zeit)
-        if(sports_unit.equals("min")||sports_unit.equals("sek")||sports_unit.equals("h")){
+        if(sports_unit.equals("Minuten")||sports_unit.equals("Sekunden")||sports_unit.equals("Stunden")){
             if(result_double>bronze) medal = "Keine Medaille";
             if((result_double<=bronze)&&(result_double>silver)) medal="Bronze";
             if((result_double<=silver)&&(result_double>gold)) medal="Silber";
             if((result_double<=gold)) medal="Gold";
         }
         //Ergebnisse müssen größer sein als Grenze (-->Weite)
-        if(sports_unit.equals("m")){
+        if(sports_unit.equals("Meter")){
             if(result_double<bronze) medal = "Keine Medaille";
             if((result_double>=bronze)&&(result_double<silver)) medal="Bronze";
             if((result_double>=silver)&&(result_double<gold)) medal="Silber";
