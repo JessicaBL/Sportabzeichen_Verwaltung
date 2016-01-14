@@ -78,7 +78,7 @@ public class DatabaseHelperParameter extends SQLiteOpenHelper {
         return db.delete(TABLE_NAME, "1", null) > 0;
     }
 
-    public Cursor selectSingleParameter(String id_sports, String id_condtition) {
+    public Cursor selectSingleParameter(int id_sports, int id_condtition) {
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor res = db.rawQuery("SELECT PARAMETER FROM " + TABLE_NAME + " WHERE ID_SPORTS =" + id_sports + " AND ID_CONDITION =" + id_condtition + "", null);
         return res;

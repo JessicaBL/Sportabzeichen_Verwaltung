@@ -77,9 +77,9 @@ public class DatabaseHelperCondition extends SQLiteOpenHelper {
         return db.delete(TABLE_NAME, "1", null) > 0;
     }
 
-    public Cursor selectSingleData(int age){
+    public Cursor selectSingleData(int age, String sex){
         SQLiteDatabase db = this.getWritableDatabase();
-        Cursor res = db.rawQuery("select ID from " + TABLE_NAME + " WHERE " + age + " BETWEEN MIN_AGE AND MAX_AGE", null);
+        Cursor res = db.rawQuery("select ID from " + TABLE_NAME + " WHERE " + age + " BETWEEN MIN_AGE AND MAX_AGE AND SEX = '" + sex + "'", null);
         return res;
     }
 

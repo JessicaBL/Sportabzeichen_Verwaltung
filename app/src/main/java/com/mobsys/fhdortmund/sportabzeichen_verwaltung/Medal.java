@@ -1,10 +1,13 @@
 package com.mobsys.fhdortmund.sportabzeichen_verwaltung;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.database.Cursor;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -15,28 +18,48 @@ import android.widget.ExpandableListView;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.Toast;
+
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 
 public class Medal extends AppCompatActivity {
 
+    private ProgressDialog pDialog;
 
     DatabaseHelper myDb;
     DatabaseHelperSports myDbSp;
     DatabaseHelperResults myDbRs;
+    DatabaseHelperCondition myDbCon;
 
+    JSONParser jsonParser = new JSONParser();
     SessionManager session;
 
     Spinner spinner_athlete;
-    String athlete_id="";
+    String athlete_id = "";
 
-    String endurance="", strength="", agility="", coordination="";
+    String endurance = "", strength = "", agility = "", coordination = "";
 
     ExpandableListAdapter listAdapter;
     ExpandableListView expListView;
     List<String> listDataHeader;
     HashMap<String, List<String>> listDataChild;
+
+    String ip_port;
+    String URL;
+
+    private static final String RESPONSE_SUCCESS = "success";
+    private static final String RESPONSE_GOALRESULTS = "goalresults";
+    private static final String RESPONSE_GOALRESULT = "goalresult";
+    private static final String RESPONSE_MEDAL = "medal";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,8 +72,12 @@ public class Medal extends AppCompatActivity {
         myDb = new DatabaseHelper(this);
         myDbSp = new DatabaseHelperSports(this);
         myDbRs = new DatabaseHelperResults(this);
+        myDbCon = new DatabaseHelperCondition(this);
 
         session = new SessionManager(getApplicationContext());
+
+        ip_port = getApplicationContext().getString(R.string.ip_port);
+        URL = "http://" + ip_port + "/sportabzeichen/dsa.php";
 
         ArrayList<String> AthletesList = populateSpinner();
 
@@ -70,26 +97,27 @@ public class Medal extends AppCompatActivity {
                 final String[] split_Result = item.split(" ");
                 athlete_id = split_Result[0];
 
-                ImageView img_en= (ImageView) findViewById(R.id.imageView_endurance);
-                ImageView img_str= (ImageView) findViewById(R.id.imageView_strength);
-                ImageView img_ag= (ImageView) findViewById(R.id.imageView_agility);
-                ImageView img_co= (ImageView) findViewById(R.id.imageView_coordination);
+                ImageView img_en = (ImageView) findViewById(R.id.imageView_endurance);
+                ImageView img_str = (ImageView) findViewById(R.id.imageView_strength);
+                ImageView img_ag = (ImageView) findViewById(R.id.imageView_agility);
+                ImageView img_co = (ImageView) findViewById(R.id.imageView_coordination);
 
                 img_en.setImageResource(R.drawable.icon_white);
                 img_str.setImageResource(R.drawable.icon_white);
                 img_ag.setImageResource(R.drawable.icon_white);
                 img_co.setImageResource(R.drawable.icon_white);
 
-                endurance="";
-                strength="";
-                agility="";
-                coordination="";
+                endurance = "";
+                strength = "";
+                agility = "";
+                coordination = "";
 
                 // get the listview
                 expListView = (ExpandableListView) findViewById(R.id.lvExp);
 
-                // preparing list data
-                prepareListData();
+                // preparing list data -> ASYNCTASK
+                MedalTask medalTask = new MedalTask();
+                medalTask.execute();
 
                 listAdapter = new ExpandableListAdapter(Medal.this, listDataHeader, listDataChild);
 
@@ -103,12 +131,12 @@ public class Medal extends AppCompatActivity {
                     public boolean onChildClick(ExpandableListView parent, View v,
                                                 int groupPosition, int childPosition, long id) {
 
-                        ImageView img_en= (ImageView) findViewById(R.id.imageView_endurance);
-                        ImageView img_str= (ImageView) findViewById(R.id.imageView_strength);
-                        ImageView img_ag= (ImageView) findViewById(R.id.imageView_agility);
-                        ImageView img_co= (ImageView) findViewById(R.id.imageView_coordination);
+                        ImageView img_en = (ImageView) findViewById(R.id.imageView_endurance);
+                        ImageView img_str = (ImageView) findViewById(R.id.imageView_strength);
+                        ImageView img_ag = (ImageView) findViewById(R.id.imageView_agility);
+                        ImageView img_co = (ImageView) findViewById(R.id.imageView_coordination);
 
-                        if(groupPosition==0){
+                        if (groupPosition == 0) {
                             img_en.setImageResource(R.drawable.icon_white);
                             endurance = listDataHeader.get(groupPosition)
                                     + " - "
@@ -116,18 +144,20 @@ public class Medal extends AppCompatActivity {
                                     listDataHeader.get(groupPosition)).get(
                                     childPosition);
 
-                            if(endurance.contains("Keine")) {
+                            if (endurance.contains("Keine")) {
                                 Toast.makeText(Medal.this, "Ergebnis nicht ausreichend", Toast.LENGTH_LONG).show();
-                                endurance="";
-                            }
-                            else{
-                                if(endurance.contains("Bronze"))img_en.setImageResource(R.drawable.icon_bronze);
-                                if(endurance.contains("Silber"))img_en.setImageResource(R.drawable.icon_silver);
-                                if(endurance.contains("Gold"))img_en.setImageResource(R.drawable.icon_gold);
+                                endurance = "";
+                            } else {
+                                if (endurance.contains("Bronze"))
+                                    img_en.setImageResource(R.drawable.icon_bronze);
+                                if (endurance.contains("Silber"))
+                                    img_en.setImageResource(R.drawable.icon_silver);
+                                if (endurance.contains("Gold"))
+                                    img_en.setImageResource(R.drawable.icon_gold);
 
                             }
                         }
-                        if(groupPosition==1){
+                        if (groupPosition == 1) {
                             img_str.setImageResource(R.drawable.icon_white);
                             strength = listDataHeader.get(groupPosition)
                                     + " - "
@@ -135,17 +165,19 @@ public class Medal extends AppCompatActivity {
                                     listDataHeader.get(groupPosition)).get(
                                     childPosition);
 
-                            if(strength.contains("Keine")) {
+                            if (strength.contains("Keine")) {
                                 Toast.makeText(Medal.this, "Ergebnis nicht ausreichend", Toast.LENGTH_LONG).show();
-                                strength="";
-                            }
-                            else{
-                                if(strength.contains("Bronze"))img_str.setImageResource(R.drawable.icon_bronze);
-                                if(strength.contains("Silber"))img_str.setImageResource(R.drawable.icon_silver);
-                                if(strength.contains("Gold"))img_str.setImageResource(R.drawable.icon_gold);
+                                strength = "";
+                            } else {
+                                if (strength.contains("Bronze"))
+                                    img_str.setImageResource(R.drawable.icon_bronze);
+                                if (strength.contains("Silber"))
+                                    img_str.setImageResource(R.drawable.icon_silver);
+                                if (strength.contains("Gold"))
+                                    img_str.setImageResource(R.drawable.icon_gold);
                             }
                         }
-                        if(groupPosition==2){
+                        if (groupPosition == 2) {
                             img_ag.setImageResource(R.drawable.icon_white);
                             agility = listDataHeader.get(groupPosition)
                                     + " - "
@@ -153,17 +185,19 @@ public class Medal extends AppCompatActivity {
                                     listDataHeader.get(groupPosition)).get(
                                     childPosition);
 
-                            if(agility.contains("Keine")) {
+                            if (agility.contains("Keine")) {
                                 Toast.makeText(Medal.this, "Ergebnis nicht ausreichend", Toast.LENGTH_LONG).show();
-                                agility="";
-                            }
-                            else{
-                                if(agility.contains("Bronze"))img_ag.setImageResource(R.drawable.icon_bronze);
-                                if(agility.contains("Silber"))img_ag.setImageResource(R.drawable.icon_silver);
-                                if(agility.contains("Gold"))img_ag.setImageResource(R.drawable.icon_gold);
+                                agility = "";
+                            } else {
+                                if (agility.contains("Bronze"))
+                                    img_ag.setImageResource(R.drawable.icon_bronze);
+                                if (agility.contains("Silber"))
+                                    img_ag.setImageResource(R.drawable.icon_silver);
+                                if (agility.contains("Gold"))
+                                    img_ag.setImageResource(R.drawable.icon_gold);
                             }
                         }
-                        if(groupPosition==3){
+                        if (groupPosition == 3) {
                             img_co.setImageResource(R.drawable.icon_white);
                             coordination = listDataHeader.get(groupPosition)
                                     + " - "
@@ -171,25 +205,39 @@ public class Medal extends AppCompatActivity {
                                     listDataHeader.get(groupPosition)).get(
                                     childPosition);
 
-                            if(coordination.contains("Keine")) {
+                            if (coordination.contains("Keine")) {
                                 Toast.makeText(Medal.this, "Ergebnis nicht ausreichend", Toast.LENGTH_LONG).show();
-                                coordination="";
+                                coordination = "";
+                            } else {
+                                if (coordination.contains("Bronze"))
+                                    img_co.setImageResource(R.drawable.icon_bronze);
+                                if (coordination.contains("Silber"))
+                                    img_co.setImageResource(R.drawable.icon_silver);
+                                if (coordination.contains("Gold"))
+                                    img_co.setImageResource(R.drawable.icon_gold);
                             }
-                            else{
-                                if(coordination.contains("Bronze"))img_co.setImageResource(R.drawable.icon_bronze);
-                                if(coordination.contains("Silber"))img_co.setImageResource(R.drawable.icon_silver);
-                                if(coordination.contains("Gold"))img_co.setImageResource(R.drawable.icon_gold);                                    }                        }
+                        }
 
                         return false;
 
                     }
                 });
             }
+
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
 
             }
         });
+    }
+
+    @Override
+    protected void onResume(){
+        super.onResume();
+
+        MedalTask medalTask = new MedalTask();
+        medalTask.execute();
+
     }
 
     public ArrayList<String> populateSpinner() {
@@ -242,7 +290,6 @@ public class Medal extends AppCompatActivity {
             String result = res.getString(4);
             String result_date = res.getString(5);
 
-
             String current_pruefer_id = session.getUserId();
 
             Cursor res_sports = myDbSp.selectSingleCategory(sport_category);
@@ -278,47 +325,130 @@ public class Medal extends AppCompatActivity {
 
     public String compareResult(String birthday, String sex, String sports_category, String sports_name, String sports_unit, String result) {
 
+        String sportsId;
+        String conId;
+        String earnedMedal = "";
         double result_double = Double.parseDouble(result);
-        double bronze;
-        double silver;
-        double gold;
+        double bronze = 0;
+        double silver = 0;
+        double gold = 0;
 
-        String medal="";
 
-        String[] mTestArray = new String[0];
+        Cursor resSp = myDbSp.selectSingleSports(sports_name);
 
-        if (sports_category.equals("Ausdauer")) {
-            mTestArray = getResources().getStringArray(R.array.m_1990_0_0);
-        }
-        if (sports_category.equals("Kraft")) {
-            mTestArray = getResources().getStringArray(R.array.m_1990_1_3);
-        }
-        if (sports_category.equals("Schnelligkeit")) {
-            mTestArray = getResources().getStringArray(R.array.m_1990_2_0);
-        }
-        if (sports_category.equals("Koordination")) {
-            mTestArray = getResources().getStringArray(R.array.m_1990_3_1);
-        }
-        bronze=Double.parseDouble(mTestArray[0]);
-        silver=Double.parseDouble(mTestArray[1]);
-        gold=Double.parseDouble(mTestArray[2]);
+        if (resSp.getCount() > 0) {
 
-        //Ergebnisse müssen kleiner sein als Grenze (-->Zeit)
-        if(sports_unit.equals("Minuten")||sports_unit.equals("Sekunden")||sports_unit.equals("Stunden")){
-            if(result_double>bronze) medal = "Keine Medaille";
-            if((result_double<=bronze)&&(result_double>silver)) medal="Bronze";
-            if((result_double<=silver)&&(result_double>gold)) medal="Silber";
-            if((result_double<=gold)) medal="Gold";
-        }
-        //Ergebnisse müssen größer sein als Grenze (-->Weite)
-        if(sports_unit.equals("Meter")){
-            if(result_double<bronze) medal = "Keine Medaille";
-            if((result_double>=bronze)&&(result_double<silver)) medal="Bronze";
-            if((result_double>=silver)&&(result_double<gold)) medal="Silber";
-            if((result_double>=gold)) medal="Gold";
+            resSp.moveToFirst();
+            sportsId = resSp.getString(0);
+
+            String birthday_split[] = birthday.split(" ");
+            int birthyear = Integer.parseInt(birthday_split[2]);
+
+
+            Calendar c = Calendar.getInstance();
+            int cur_year = c.get(Calendar.YEAR);
+            int age = cur_year - birthyear;
+
+            Cursor resCon = myDbCon.selectSingleData(age, sex);
+
+            if (resCon.getCount() > 0) {
+
+                resCon.moveToFirst();
+                conId = resCon.getString(0);
+
+                int success;
+
+                try {
+
+                    JSONArray goalresults;
+
+                    //Put result parameters in list
+                    List<NameValuePair> params = new ArrayList<NameValuePair>();
+                    params.add(new BasicNameValuePair("id_sports", sportsId));
+                    params.add(new BasicNameValuePair("id_con", conId));
+
+                    //Execute HTTP Request
+                    JSONObject json = jsonParser.makeHttpRequest(URL, "GET", params);
+
+                    Log.d("Populating data", "Load goal results...");
+
+                    //Get success value of HTTP Response
+                    success = json.getInt(RESPONSE_SUCCESS);
+
+                    //Return HTTP Response message to AsyncTask to use this in onPostExecute method
+                    if (success == 1) {
+                        Log.d("Laoding data successful", json.toString());
+
+                        String goalresult = null;
+                        String medal = null;
+
+                        try {
+
+                            goalresults = json.getJSONArray(RESPONSE_GOALRESULTS);
+
+                            for (int i = 0; i < goalresults.length(); i++) {
+
+                                JSONObject res = goalresults.getJSONObject(i);
+
+                                goalresult = res.getString(RESPONSE_GOALRESULT);
+                                medal = res.getString(RESPONSE_MEDAL);
+
+                                if (medal.equals("bronze")) {
+                                    bronze = Double.parseDouble(goalresult);
+                                } else if (medal.equals("silber")) {
+                                    silver = Double.parseDouble(goalresult);
+                                } else if (medal.equals("gold")) {
+                                    gold = Double.parseDouble(goalresult);
+                                }
+                            }
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                        //Ergebnisse müssen kleiner sein als Grenze (-->Zeit)
+                        if (sports_category.equals("Ausdauer") || sports_category.equals("Schnelligkeit")) {
+                            if (result_double > bronze) earnedMedal = "Keine Medaille";
+                            if ((result_double <= bronze) && (result_double > silver))
+                                earnedMedal = "Bronze";
+                            if ((result_double <= silver) && (result_double > gold))
+                                earnedMedal = "Silber";
+                            if ((result_double <= gold)) earnedMedal = "Gold";
+                        }
+                        //Ergebnisse müssen größer sein als Grenze (-->Weite)
+                        if (sports_category.equals("Kraft") || sports_category.equals("Koordination")) {
+                            if (result_double < bronze) earnedMedal = "Keine Medaille";
+                            if ((result_double >= bronze) && (result_double < silver))
+                                earnedMedal = "Bronze";
+                            if ((result_double >= silver) && (result_double < gold))
+                                earnedMedal = "Silber";
+                            if ((result_double >= gold)) earnedMedal = "Gold";
+                        }
+
+                        return earnedMedal;
+
+                    } else {
+                        Log.d("Loading data failed!", json.toString());
+                        earnedMedal = "Keine";
+                        return earnedMedal;
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                earnedMedal = "Keine";
+                return earnedMedal;
+
+            } else {
+                Log.d("Populating data", "Condition cannot be found in db");
+                earnedMedal = "Keine";
+                return earnedMedal;
+            }
+        } else {
+            Log.d("Populating data", "Sport cannot be found in db");
+            earnedMedal = "Keine";
+            return earnedMedal;
         }
 
-        return medal;
     }
 
     @Override
@@ -337,21 +467,21 @@ public class Medal extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_saveDSA) {
-            if(endurance.equals("")||strength.equals("")||agility.equals("")||coordination.equals((""))){
+            if (endurance.equals("") || strength.equals("") || agility.equals("") || coordination.equals((""))) {
                 Toast.makeText(Medal.this, "Bitte jede Kategorie eintragen", Toast.LENGTH_LONG).show();
-            }
-            else{
+            } else {
                 Intent intent = new Intent(this, DSA.class);
-                intent.putExtra("endurance",endurance);
-                intent.putExtra("strength",strength);
-                intent.putExtra("agility",agility);
-                intent.putExtra("coordination",coordination);
-                intent.putExtra("athlete",athlete_id);
+                intent.putExtra("endurance", endurance);
+                intent.putExtra("strength", strength);
+                intent.putExtra("agility", agility);
+                intent.putExtra("coordination", coordination);
+                intent.putExtra("athlete", athlete_id);
 
-                startActivity(intent);            }
+                startActivity(intent);
+            }
 
         }
-        if (id==android.R.id.home){
+        if (id == android.R.id.home) {
 
             Intent intent = new Intent(this, MainActivity.class);
             startActivity(intent);
@@ -365,7 +495,7 @@ public class Medal extends AppCompatActivity {
 
     @Override
     public boolean onKeyDown(int keycode, KeyEvent e) {
-        switch(keycode) {
+        switch (keycode) {
             case KeyEvent.KEYCODE_BACK:
                 Intent intent = new Intent(this, MainActivity.class);
                 startActivity(intent);
@@ -373,6 +503,37 @@ public class Medal extends AppCompatActivity {
         }
 
         return super.onKeyDown(keycode, e);
+    }
+
+    class MedalTask extends AsyncTask<String, String, String> {
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            //Show progress dialog during task execution
+            pDialog = new ProgressDialog(Medal.this);
+            pDialog.setMessage("Loading data..");
+            pDialog.setIndeterminate(false);
+            pDialog.setCancelable(true);
+            pDialog.show();
+        }
+
+        @Override
+        protected String doInBackground(String... args) {
+            prepareListData();
+            return "done";
+        }
+
+
+        @Override
+        protected void onPostExecute(String response) {
+
+            //Close progress dialog
+            pDialog.dismiss();
+
+            Toast.makeText(getApplicationContext(), "Medaillen aktualisiert", Toast.LENGTH_LONG).show();
+
+        }
     }
 
 }

@@ -76,8 +76,8 @@ public class Login extends AppCompatActivity {
 
             EditText user = (EditText)findViewById(R.id.editText_pruefer_name);
             EditText pwd = (EditText)findViewById(R.id.editText_pruefer_password);
-            username = user.getText().toString();
-            password = pwd.getText().toString();
+            username = user.getText().toString().trim();
+            password = pwd.getText().toString().trim();
 
             //Execute AsyncTask to validate login data on remote db
             LoginTask login = new LoginTask();

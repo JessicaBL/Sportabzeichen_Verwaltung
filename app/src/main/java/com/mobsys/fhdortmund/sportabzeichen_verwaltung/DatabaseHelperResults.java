@@ -64,17 +64,13 @@ public class DatabaseHelperResults extends SQLiteOpenHelper{
         return res;
     }
 
-    public boolean updateData(String id, String id_athlete,String id_pruefer, String id_sports, String result, String result_date, String server_synced ){
+    public boolean updateSyncedRows() {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
-        contentValues.put(COL_2, id_pruefer);
-        contentValues.put(COL_3, id_athlete);
-        contentValues.put(COL_4, id_sports);
-        contentValues.put(COL_5, result);
-        contentValues.put(COL_6, result_date);
-        contentValues.put(COL_7, server_synced);
-        return db.update(TABLE_NAME, contentValues, "ID = ?", new String[] { id }) > 0 ;
+        contentValues.put(COL_7, "1");
+        return db.update(TABLE_NAME, contentValues, "server_synced = ?", new String[]{"0"}) > 0;
     }
+
 
     public boolean deleteData(String id){
         SQLiteDatabase db = this.getWritableDatabase();
@@ -210,7 +206,12 @@ public class DatabaseHelperResults extends SQLiteOpenHelper{
                 int reqSuccess = jsonReq.getInt(REQUEST_SUCCESS);
 
                 if (reqSuccess == 1) {
-                    successSyncLocalToServer = true;
+                    boolean localDbUpadted = updateSyncedRows();
+                    if (localDbUpadted) {
+                        successSyncLocalToServer = true;
+                    } else {
+                        Log.d("Sync results db: ", "Failed to update local server_synced column " + json.toString());
+                    }
                 } else {
                     Log.d("Sync results db", "Failed to sync results data from local db to server, " + json.toString());
                 }

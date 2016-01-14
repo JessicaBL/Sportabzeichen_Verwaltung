@@ -83,6 +83,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return db.update(TABLE_NAME, contentValues, "ID = ?", new String[]{id}) > 0;
     }
 
+    public boolean updateSyncedRows() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(COL_7, "1");
+        return db.update(TABLE_NAME, contentValues, "server_synced = ?", new String[]{"0"}) > 0;
+    }
+
     public boolean deleteData(String id) {
         SQLiteDatabase db = this.getWritableDatabase();
         return db.delete(TABLE_NAME, "ID = ?", new String[]{id}) > 0;
@@ -209,7 +216,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 int reqSuccess = jsonReq.getInt(REQUEST_SUCCESS);
 
                 if (reqSuccess == 1) {
-                    successSyncLocalToServer = true;
+                    boolean localdbUpdated = updateSyncedRows();
+                    if (localdbUpdated) {
+                        successSyncLocalToServer = true;
+                    }else {
+                        Log.d("Sync athlete db: ", "Failed to update local server_synced column " + json.toString());
+                    }
                 } else {
                     Log.d("Sync athlete db: ", "Failed to sync athlete data from local db to server, " + json.toString());
                 }

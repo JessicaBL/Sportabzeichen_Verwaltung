@@ -84,11 +84,6 @@ public class DatabaseHelperSports extends SQLiteOpenHelper{
         return res;
     }
 
-    public Cursor selectLastData(){
-        SQLiteDatabase db = this.getWritableDatabase();
-        Cursor res = db.rawQuery("select max(id) from" + TABLE_NAME + "", null);
-        return res;
-    }
 
     public Cursor selectSingleCategory(String category){
         SQLiteDatabase db = this.getWritableDatabase();

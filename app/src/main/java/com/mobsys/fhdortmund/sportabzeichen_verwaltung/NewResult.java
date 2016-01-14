@@ -8,6 +8,7 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -30,6 +31,8 @@ public class NewResult extends AppCompatActivity {
     DatabaseHelper myDb;
     DatabaseHelperSports myDbSp;
     DatabaseHelperResults myDbRs;
+    DatabaseHelperCondition myDbCon;
+    DatabaseHelperParameter myDbPar;
 
     SessionManager session;
 
@@ -37,9 +40,10 @@ public class NewResult extends AppCompatActivity {
     Spinner spinner_athlete;
     EditText result;
 
-    String id_sports = null;
+    int id_sports;
     String category = null;
     String unit = null;
+    String parameter = null;
     String sports = null;
 
     String id_pruefer = null;
@@ -58,6 +62,8 @@ public class NewResult extends AppCompatActivity {
         myDb = new DatabaseHelper(this);
         myDbSp = new DatabaseHelperSports(this);
         myDbRs = new DatabaseHelperResults(this);
+        myDbCon = new DatabaseHelperCondition(this);
+        myDbPar = new DatabaseHelperParameter(this);
 
         session = new SessionManager(getApplicationContext());
 
@@ -69,11 +75,10 @@ public class NewResult extends AppCompatActivity {
         Cursor res = myDbSp.selectSingleSports(sports);
 
         res.moveToFirst();
-            id_sports = res.getString(0);
-            category = res.getString(1);
-            unit = res.getString(3);
-
-
+        id_sports = res.getInt(0);
+        category = res.getString(1);
+        unit = res.getString(3);
+        parameter = res.getString(4);
 
 
         customizeSupportActionBar(category, sports);
@@ -98,17 +103,9 @@ public class NewResult extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 String selected = parent.getItemAtPosition(position).toString();
-                if(category.equals("Ausdauer")&&(sports.equals("Schwimmen"))) {
-                    adjustParameter("Ausdauer", "Schwimmen", selected);
-                }
-                if(category.equals("Kraft")&&(sports.equals("Kugelstoßen"))) {
-                    adjustParameter("Kraft", "Kugelstoßen", selected);
-                }
-                if(category.equals("Kraft")&&(sports.equals("Steinstoßen"))) {
-                    adjustParameter("Kraft", "Steinstoßen", selected);
-                }
-                if(category.equals("Schnelligkeit")&&(sports.equals("Laufen"))) {
-                    adjustParameter("Schnelligkeit", "Laufen", selected);
+
+                if(parameter.equals("1")) {
+                    updateParameter(selected);
                 }
             }
 
@@ -117,13 +114,9 @@ public class NewResult extends AppCompatActivity {
 
             }
         });
-
-
-
-
     }
 
-    public void adjustParameter(String category, String sports, String selected) {
+    public void updateParameter(String selected) {
         String selected_info[] = selected.split(" ");
         String selected_id = selected_info[0];
 
@@ -138,37 +131,26 @@ public class NewResult extends AppCompatActivity {
 
         Calendar c = Calendar.getInstance();
         int cur_year = c.get(Calendar.YEAR);
-        int dif=cur_year-birthyear;
-        String parameter="";
-        if(category.equals("Ausdauer") && sports.equals("Schwimmen")) {
-            if (dif <= 49) parameter="800 m";
-            else if (dif <= 74)  parameter="600 m";
-            else if (dif >= 75)  parameter="200 m";
-        }
-        if(category.equals("Kraft") && sports.equals("Kugelstoßen")){
-            if (dif <= 49 && sex.equals("weiblich")) parameter="4 kg";
-            else if (dif <= 74 &&sex.equals("weiblich")) parameter="3 kg";
-            else if (dif >= 75 && sex.equals("weiblich")) parameter="2 kg";
+        int age=cur_year-birthyear;
 
-            else if (dif <= 19 && sex.equals("männlich")) parameter="6 kg";
-            else if (dif <= 49 && sex.equals("männlich")) parameter="7,26 kg";
-            else if (dif <= 59 && sex.equals("männlich")) parameter="6 kg";
-            else if (dif <= 69 && sex.equals("männlich")) parameter="5 kg";
-            else if (dif <= 79 && sex.equals("männlich")) parameter="4 kg";
-            else if (dif >=80 && sex.equals("männlich")) parameter="3 kg";
+        Cursor resCon = myDbCon.selectSingleData(age, sex);
+
+        if(resCon.getCount()>0) {
+
+            resCon.moveToFirst();
+            int conId = res.getInt(0);
+            Cursor resPar = myDbPar.selectSingleParameter(id_sports, conId);
+
+            if(resPar.getCount() > 0) {
+                resPar.moveToFirst();
+                String parameter = resPar.getString(0);
+                getSupportActionBar().setSubtitle("Ergebnis eintragen ("+parameter+")");
+            } else {
+                Log.d("Updating parameter", "No Parameter found");
+            }
+        } else {
+            Log.d("Updating parameter", "No row found with specified conditions");
         }
-        if(category.equals("Kraft") && sports.equals("Steinstoßen")){
-            if (dif <= 19 && sex.equals("männlich")) parameter="10 kg";
-            else if (dif <= 49 && sex.equals("männlich")) parameter="15 kg";
-            else if (dif >= 50 && sex.equals("männlich")) parameter="10 kg";
-            else if (sex.equals("weiblich")) parameter="5 kg";
-        }
-        if(category.equals("Schnelligkeit") && sports.equals("Laufen")){
-            if (dif <= 39) parameter="100 m";
-            else if (dif <= 74) parameter="50 m";
-            else if (dif >= 75) parameter="30 m";
-        }
-        getSupportActionBar().setSubtitle("Ergebnis eintragen ("+parameter+")");
 
     }
 
@@ -277,7 +259,7 @@ public class NewResult extends AppCompatActivity {
             else if (result.getText().toString().equals("")) {
                 Toast.makeText(NewResult.this, "Bitte Ergebnis eingeben", Toast.LENGTH_LONG).show();
 
-            }else if(checkTries(id_athlete, id_sports.toString())==false){
+            }else if(checkTries(id_athlete, Integer.toString(id_sports))==false){
                 Toast.makeText(NewResult.this, "Anzahl der Versuche für diese Disziplin überschritten", Toast.LENGTH_LONG).show();
             } else {
                 UUID uuid = UUID.randomUUID();
@@ -285,7 +267,7 @@ public class NewResult extends AppCompatActivity {
 
                 String currentDateString = DateFormat.getDateInstance().format(new Date());
 
-                boolean isInserted = myDbRs.insertData(result_id, id_pruefer, id_athlete, id_sports, result.getText().toString(), currentDateString.toString(), "0");
+                boolean isInserted = myDbRs.insertData(result_id, id_pruefer, id_athlete, Integer.toString(id_sports), result.getText().toString(), currentDateString.toString(), "0");
 
                     if (isInserted == true) {
                         Toast.makeText(NewResult.this, "Ergebnis eingetragen", Toast.LENGTH_LONG).show();
